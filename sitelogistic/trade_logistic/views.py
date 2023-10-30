@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.urls import reverse
 from django.template.loader import render_to_string
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from .forms import *
 from .models import *
@@ -22,6 +22,10 @@ menu = [
     {'title': 'Загрузить инвойс', 'url_name': 'uploadfile'},
     {'title': 'Войти', 'url_name': 'login'}
 ]
+
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
 def about(request):
@@ -50,16 +54,10 @@ def getexcel(request):
     return response
 
 
-# print(form.cleaned_data)
 def addpage(request):
     if request.method == 'POST':
         form = AddPostForm(request.POST)
         if form.is_valid():
-            # try:
-            #     TradeLogistic.objects.create(**form.cleaned_data)
-            #     return redirect('home')
-            # except:
-            #     form.add_error(None, 'Ошибка добавления поста')
             form.save()
             return redirect('home')
     else:
@@ -73,25 +71,12 @@ def addpage(request):
     return render(request, 'trade_logistic/addpage.html', data)
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(TradeLogistic, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,
-        'cat_selected': 1,
-    }
-    return render(request, 'trade_logistic/post.html', data)
-
-
 def contact(request):
     return HttpResponse(f"Обратная связь")
 
 
 def handle_uploaded_file(file):
-    # Обработка загруженного файла
     data = []
-    # Парсинг CSV и добавление данных в список
     reader = csv.reader(TextIOWrapper(file, encoding='cp1251'), delimiter=';')
     for row in reader:
         data.append(row)
@@ -118,8 +103,8 @@ class TradeLogisticHome(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Главная страница'
+        context['menu'] = menu
         context['cat_selected'] = 0
         return context
 
@@ -131,19 +116,41 @@ class TradeLogisticCategory(ListView):
     model = TradeLogistic
     template_name = 'trade_logistic/index.html'
     context_object_name = 'posts'
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Модули - ' + str(context['posts'][0].cat)
+        context['menu'] = menu
+        context['cat_selected'] = context['posts'][0].cat_id
+        return context
 
     def get_queryset(self):
         return TradeLogistic.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
 
-# def index(request):
-#     posts = TradeLogistic.published.all().select_related('cat')
+
+# def show_post(request, post_slug):
+#     post = get_object_or_404(TradeLogistic, slug=post_slug)
 #     data = {
-#         'title': 'Главная страница',
+#         'title': post.title,
 #         'menu': menu,
-#         'posts': posts,
-#         'cat_selected': 0
+#         'post': post,
+#         'cat_selected': 1,
 #     }
-#     return render(request, 'trade_logistic/index.html', context=data)
+#     return render(request, 'trade_logistic/post.html', data)
+
+
+class ShowPost(DetailView):
+    model = TradeLogistic
+    template_name = 'trade_logistic/post.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['post']
+        context['menu'] = menu
+        return context
 
 
 def show_category(request, cat_slug):
@@ -156,10 +163,6 @@ def show_category(request, cat_slug):
         'cat_selected': category.pk
     }
     return render(request, 'trade_logistic/index.html', context=data)
-
-
-def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
 def show_tag_postlist(request, tag_slug):
