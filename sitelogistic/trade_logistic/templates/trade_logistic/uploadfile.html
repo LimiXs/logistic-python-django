@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p><input type="file" name="csv_file"></p>
+    <p><button type="submit">Загрузить CSV файл</button></p>
+</form>
+
+{% endblock %}
