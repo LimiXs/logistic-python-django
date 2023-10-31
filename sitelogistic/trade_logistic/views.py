@@ -1,118 +1,40 @@
 import os
-from io import TextIOWrapper
-
 import pandas as pd
 import csv
+from io import TextIOWrapper
 
+from django.contrib.auth import logout, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from .models import *
-
-menu = [
-    {'title': 'О сайте', 'url_name': 'about'},
-    {'title': 'Получить шаблон', 'url_name': 'getexcel'},
-    {'title': 'Добавить статью', 'url_name': 'addpage'},
-    {'title': 'Обратная связь', 'url_name': 'contact'},
-    {'title': 'Загрузить инвойс', 'url_name': 'uploadfile'},
-    {'title': 'Войти', 'url_name': 'login'}
-]
+from .utils import *
 
 
-def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
-
-
-def about(request):
-    if request.method == 'POST':
-        pass
-    return render(request, 'trade_logistic/about.html', {'title': 'О сайте', 'menu': menu})
-
-
-def getexcel(request):
-    cap = {
-        '№': [], 'Код товара': [], 'Наименование': [], 'Артикул': [], 'Торговая марка': [], 'Производитель': [],
-        'Страна': [], 'Ед. изм.': [], 'Кол-во в ед. изм.': [], 'Цена': [], 'Стоимость': [],
-        'Вес  нетто': [], 'Вес  брутто': [], 'Доп. код': []
-    }
-    df = pd.DataFrame(cap)
-    pd.set_option('display.colheader_justify', 'center')
-
-    excel_file_path = 'invoice_template.xlsx'
-    df.to_excel(excel_file_path, index=False)
-
-    with open(excel_file_path, 'rb') as excel_file:
-        response = HttpResponse(excel_file.read(),
-                                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = f'attachment; filename={os.path.basename(excel_file_path)}'
-
-    return response
-
-
-def addpage(request):
-    if request.method == 'POST':
-        form = AddPostForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = AddPostForm()
-
-    data = {
-        'menu': menu,
-        'title': 'Добавление статьи',
-        'form': form
-    }
-    return render(request, 'trade_logistic/addpage.html', data)
-
-
-def contact(request):
-    return HttpResponse(f"Обратная связь")
-
-
-def handle_uploaded_file(file):
-    data = []
-    reader = csv.reader(TextIOWrapper(file, encoding='cp1251'), delimiter=';')
-    for row in reader:
-        data.append(row)
-    return data
-
-
-def uploadfile(request):
-    if request.method == 'POST' and request.FILES['csv_file']:
-        csv_file = request.FILES['csv_file']
-        data = handle_uploaded_file(csv_file)
-        return render(request, 'trade_logistic/display_csv.html', {'data': data})
-
-    return render(request, 'trade_logistic/uploadfile.html')
-
-
-def login(request):
-    return HttpResponse(f"Авторизация")
-
-
-class TradeLogisticHome(ListView):
+class TradeLogisticHome(DataMixin, ListView):
     model = TradeLogistic
     template_name = 'trade_logistic/index.html'
     context_object_name = 'posts'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
-        context['menu'] = menu
-        context['cat_selected'] = 0
-        return context
+        c_def = self.get_user_context(title='Главная страница')
+        return dict(list(context.items()) + list(c_def.items()))
 
     def get_queryset(self):
         return TradeLogistic.objects.filter(is_published=True)
 
 
-class TradeLogisticCategory(ListView):
+class TradeLogisticCategory(DataMixin, ListView):
     model = TradeLogistic
     template_name = 'trade_logistic/index.html'
     context_object_name = 'posts'
@@ -120,27 +42,15 @@ class TradeLogisticCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Модули - ' + str(context['posts'][0].cat)
-        context['menu'] = menu
-        context['cat_selected'] = context['posts'][0].cat_id
-        return context
+        c_def = self.get_user_context(title='Разделы - ' + str(context['posts'][0].cat),
+                                      cat_selected=context['posts'][0].cat_id)
+        return dict(list(context.items()) + list(c_def.items()))
 
     def get_queryset(self):
         return TradeLogistic.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
 
 
-# def show_post(request, post_slug):
-#     post = get_object_or_404(TradeLogistic, slug=post_slug)
-#     data = {
-#         'title': post.title,
-#         'menu': menu,
-#         'post': post,
-#         'cat_selected': 1,
-#     }
-#     return render(request, 'trade_logistic/post.html', data)
-
-
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = TradeLogistic
     template_name = 'trade_logistic/post.html'
     slug_url_kwarg = 'post_slug'
@@ -148,9 +58,20 @@ class ShowPost(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title=context['post'])
+        return dict(list(context.items()) + list(c_def.items()))
+
+
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+    form_class = AddPostForm
+    template_name = 'trade_logistic/add_page.html'
+    success_url = reverse_lazy('home')
+    raise_exception = True
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Добавление статьи')
+        return dict(list(context.items()) + list(c_def.items()))
 
 
 def show_category(request, cat_slug):
@@ -174,3 +95,92 @@ def show_tag_postlist(request, tag_slug):
         'posts': posts,
     }
     return render(request, 'trade_logistic/index.html', context=data)
+
+
+def handle_uploaded_file(file):
+    data = []
+    reader = csv.reader(TextIOWrapper(file, encoding='cp1251'), delimiter=';')
+    for row in reader:
+        data.append(row)
+    return data
+
+
+def upload_file(request):
+    if request.method == 'POST' and request.FILES['csv_file']:
+        csv_file = request.FILES['csv_file']
+        data = handle_uploaded_file(csv_file)
+        return render(request, 'trade_logistic/display_csv.html', {'data': data})
+
+    return render(request, 'trade_logistic/upload_file.html')
+
+
+def get_excel(request):
+    cap = {
+        '№': [], 'Код товара': [], 'Наименование': [], 'Артикул': [], 'Торговая марка': [], 'Производитель': [],
+        'Страна': [], 'Ед. изм.': [], 'Кол-во в ед. изм.': [], 'Цена': [], 'Стоимость': [],
+        'Вес  нетто': [], 'Вес  брутто': [], 'Доп. код': []
+    }
+    df = pd.DataFrame(cap)
+    pd.set_option('display.colheader_justify', 'center')
+
+    excel_file_path = 'invoice_template.xlsx'
+    df.to_excel(excel_file_path, index=False)
+
+    with open(excel_file_path, 'rb') as excel_file:
+        response = HttpResponse(excel_file.read(),
+                                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename={os.path.basename(excel_file_path)}'
+
+    return response
+
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound("<h1>Страница не найдена</h1>")
+
+
+def about(request):
+    if request.method == 'POST':
+        pass
+    return render(request, 'trade_logistic/about.html', {'title': 'Немного о нас', 'menu': menu})
+
+
+def contact(request):
+    return HttpResponse(f"Обратная связь")
+
+
+# def login(request):
+#     return HttpResponse(f"Авторизация")
+
+
+class RegisterUser(DataMixin, CreateView):
+    form_class = RegisterUserForm
+    template_name = 'trade_logistic/register.html'
+    success_url = reverse_lazy('login')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Регистрация')
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('home')
+
+
+class LoginUser(DataMixin, LoginView):
+    form_class = LoginUserForm
+    template_name = 'trade_logistic/login.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Авторизация")
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def get_success_url(self):
+        return reverse_lazy('home')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')

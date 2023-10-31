@@ -91,9 +91,9 @@ class Note(models.Model):
         verbose_name = 'Примечание'
         verbose_name_plural = 'Примечания'
 
-    name = models.CharField(max_length=100)
-    readiness = models.IntegerField(null=True)
-    priority = models.IntegerField(blank=True, default=0)
+    name = models.CharField(max_length=100, verbose_name='Описание')
+    readiness = models.IntegerField(null=True, verbose_name='Готовность')
+    priority = models.IntegerField(blank=True, default=0, verbose_name='Приоритет')
     objects = models.Manager()
 
     def __str__(self):

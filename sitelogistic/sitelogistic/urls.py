@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('trade_logistic.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 handler404 = page_not_found

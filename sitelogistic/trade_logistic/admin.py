@@ -1,5 +1,7 @@
 from django.contrib import admin, messages
 from .models import TradeLogistic, Category, TagPost, Note
+from django import forms
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -19,13 +21,22 @@ class NoteFilter(admin.SimpleListFilter):
             return queryset.filter(note__isnull=True)
 
 
+class PostsAdminForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget)
+
+    class Meta:
+        models = TradeLogistic
+        fields = '__all__'
+
+
 @admin.register(TradeLogistic)
 class TradeLogisticAdmin(admin.ModelAdmin):
+    form = PostsAdminForm
     fields = ['title', 'slug', 'content', 'cat', 'note', 'tags']
-    prepopulated_fields = {'slug': ('title', )}
+    prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ['tags']
     list_display = ('title', 'time_create', 'is_published', 'cat', 'brief_info')
-    list_display_links = ('title', )
+    list_display_links = ('title',)
     ordering = ['time_create', 'title']
     list_editable = ('is_published',)
     list_per_page = 5
