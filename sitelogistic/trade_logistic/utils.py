@@ -16,7 +16,6 @@ class DataMixin:
 
     def get_user_context(self, **kwargs):
         context = kwargs
-        cats = Category.objects.all()
         cats = Category.objects.annotate(Count('posts'))
 
         user_menu = menu.copy()

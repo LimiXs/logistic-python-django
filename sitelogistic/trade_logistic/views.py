@@ -99,7 +99,7 @@ def show_tag_postlist(request, tag_slug):
 
 def handle_uploaded_file(file):
     data = []
-    reader = csv.reader(TextIOWrapper(file, encoding='cp1251'), delimiter=';')
+    reader = csv.reader(TextIOWrapper(file, encoding='utf-8'), delimiter=';')
     for row in reader:
         data.append(row)
     return data
@@ -146,10 +146,6 @@ def about(request):
 
 def contact(request):
     return HttpResponse(f"Обратная связь")
-
-
-# def login(request):
-#     return HttpResponse(f"Авторизация")
 
 
 class RegisterUser(DataMixin, CreateView):
