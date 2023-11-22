@@ -1,7 +1,10 @@
 from django.contrib import admin, messages
-from .models import TradeLogistic, Category, TagPost, Note
+from django.http import HttpResponseRedirect
+from .models import TradeLogistic, Category, TagPost, Note, DocumentInfo
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from trade_logistic.external_utils.connecter_fdb import *
+from admin_extra_buttons.api import ExtraButtonsMixin, button
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -77,3 +80,35 @@ class TagAdmin(admin.ModelAdmin):
 class NoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'readiness', 'readiness', 'priority')
     list_display_links = ('id', 'name', 'readiness', 'readiness', 'priority')
+
+
+@admin.register(DocumentInfo)
+class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
+    list_display = [field.name for field in DocumentInfo._meta.get_fields()]
+    list_display_links = ('id', 'num_item',)
+
+    @button(
+        label='Загрузить данные',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def load_data(self, request):
+        # obj = DocumentInfo.objects.all()
+        # print(list(obj))
+        records = get_data_fdb(HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD)
+        for record in records:
+            print(record[0])
+            if not DocumentInfo.objects.filter(num_item=record[0]).exists():
+                DocumentInfo.objects.create(
+                    date_placement=record[1],
+                    num_item=record[0],
+                    num_transport=record[3],
+                    num_doc=record[4],
+                    date_docs=record[7],
+                    documents=record[6],
+                    status=record[9],
+                    num_nine=record[10],
+                    num_td=record[11] if record[11] is None else record[11][:30]
+                )
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

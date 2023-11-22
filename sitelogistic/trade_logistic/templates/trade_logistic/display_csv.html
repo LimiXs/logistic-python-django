@@ -2,6 +2,11 @@
 
 {% block content %}
 
+<form method="POST" action="{% url 'load_docs' %}">
+    {% csrf_token %}
+    <button type="submit">Вызвать функцию</button>
+</form>
+
 <div>
     <h1>Содержимое CSV файла</h1>
         <table>

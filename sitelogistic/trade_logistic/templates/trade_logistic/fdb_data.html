@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<form action="{% url 'doc_info' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="method" value="post">
+  <button type="submit">Добавить записи</button>
+</form>
+<div style="overflow-x: auto;">
+  <table>
+    <thead>
+      <tr>
+        {% for field_name in fields %}
+          <th>{{ field_name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ record.1 }}</td>
+        <td>{{ record.2 }}</td>
+        <td>{{ record.3 }}</td>
+        <td>{{ record.4 }}</td>
+        <td>{{ record.7 }}</td>
+        <td>{{ record.6 }}</td>
+        <td>{{ record.9 }}</td>
+        <td>{{ record.10 }}</td>
+        <td>{{ record.11 }}</td>
+        <td>-</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!--<ul>
+    {% for record in records %}
+        <li>{{ record }}</li>
+    {% endfor %}
+    {% for value in record %}
+        <td>{{ value }}</td>
+    {% endfor %}|truncatechars:20
+</ul>-->
+
+{% endblock %}

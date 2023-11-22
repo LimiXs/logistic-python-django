@@ -4,20 +4,20 @@ import csv
 from io import TextIOWrapper
 
 from django.contrib.auth import logout, login
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import AuthenticationForm
-from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.template.loader import render_to_string
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.forms import AuthenticationForm
+# from django.core.paginator import Paginator
+# from django.template.loader import render_to_string
 from .forms import *
 from .models import *
 from .utils import *
+from trade_logistic.external_utils.connecter_fdb import *
 
 
 class TradeLogisticHome(DataMixin, ListView):
@@ -180,3 +180,22 @@ class LoginUser(DataMixin, LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+def my_view(request):
+    data = DocumentInfo.objects.all()
+    return render(request, 'trade_logistic/display_csv.html', {'data': data})
+
+
+def get_doc_info(request):
+    fields = DocumentInfo._meta.get_fields()
+    field_names = [field.verbose_name for field in fields]
+
+    data = {
+        'menu': menu,
+        'fields': field_names
+    }
+    if request.method == 'POST':
+        data['records'] = get_data_fdb(HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD)
+
+    return render(request, 'trade_logistic/fdb_data.html', context=data)

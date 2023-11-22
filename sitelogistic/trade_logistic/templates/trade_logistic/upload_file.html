@@ -8,4 +8,19 @@
     <p><button type="submit">Загрузить CSV файл</button></p>
 </form>
 
+<form method="POST" action="">
+    {% csrf_token %}
+    <button type="submit">Вызвать функцию</button>
+</form>
+
+{% if data %}
+    <ul>
+        {% for item in data %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет данных</p>
+{% endif %}
+
 {% endblock %}

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'trade_logistic.apps.TradeLogisticConfig',
     'debug_toolbar',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'admin_extra_buttons'
 ]
 
 MIDDLEWARE = [

@@ -7,7 +7,8 @@ menu = [
     {'title': 'Добавить статью', 'url_name': 'add_page'},
     {'title': 'Написать нам', 'url_name': 'contact'},
     {'title': 'Получить шаблон', 'url_name': 'get_excel'},
-    {'title': 'Загрузить инвойс', 'url_name': 'upload_file'}
+    {'title': 'Загрузить инвойс', 'url_name': 'upload_file'},
+    {'title': 'Уведомления', 'url_name': 'doc_info'}
 ]
 
 
