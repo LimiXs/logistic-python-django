@@ -112,3 +112,11 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
                 )
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    @button(
+        label='Найти pdf',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def match_docs_pdf(self, request):
+        pass
