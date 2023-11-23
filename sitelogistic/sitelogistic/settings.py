@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -204,4 +205,11 @@ CKEDITOR_CONFIGS = {
             'elementspath'
         ]),
     }
+}
+
+CELERY_BEAT_SCHEDULE = {
+    'match-data-task-every-5_minutes': {
+        'task': 'trade_logistic.tasks.match_pdf_docs',
+        'schedule': crontab(minute='*/1'),
+    },
 }

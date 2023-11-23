@@ -5,6 +5,10 @@ from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from trade_logistic.external_utils.connecter_fdb import *
 from admin_extra_buttons.api import ExtraButtonsMixin, button
+from trade_logistic.external_utils.list_files import *
+from django.core.exceptions import ObjectDoesNotExist
+
+PDFS_CATALOG_PATH = r'D:\khomich\test'
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -93,11 +97,8 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def load_data(self, request):
-        # obj = DocumentInfo.objects.all()
-        # print(list(obj))
         records = get_data_fdb(HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD)
         for record in records:
-            print(record[0])
             if not DocumentInfo.objects.filter(num_item=record[0]).exists():
                 DocumentInfo.objects.create(
                     date_placement=record[1],
@@ -119,4 +120,11 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def match_docs_pdf(self, request):
-        pass
+        pdf_dict = list_files(PDFS_CATALOG_PATH)
+        for num, path in pdf_dict.items():
+            try:
+                record = DocumentInfo.objects.get(num_item=num)
+                record.path_doc = path
+                record.save()
+            except ObjectDoesNotExist:
+                print("Запись не найдена")
