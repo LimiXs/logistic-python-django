@@ -10,7 +10,7 @@
     <thead>
       <tr>
         {% for field_name in fields %}
-          <th>{{ field_name }}</th>
+          <th scope="col"><a href="?sort_by=date_placement">{{ field_name }}</a></th>
         {% endfor %}
       </tr>
     </thead>
@@ -18,16 +18,20 @@
       {% for record in records %}
       <tr>
         <td>{{ forloop.counter }}</td>
-        <td>{{ record.1 }}</td>
-        <td>{{ record.2 }}</td>
-        <td>{{ record.3 }}</td>
-        <td>{{ record.4 }}</td>
-        <td>{{ record.7 }}</td>
-        <td>{{ record.6 }}</td>
-        <td>{{ record.9 }}</td>
-        <td>{{ record.10 }}</td>
-        <td>{{ record.11 }}</td>
-        <td>-</td>
+        <td>{{ record.date_placement }}</td>
+        <td>{{ record.num_item }}</td>
+        <td>{{ record.num_transport }}</td>
+        <td>{{ record.num_doc }}</td>
+        <td>{{ record.date_docs }}</td>
+        <td>{{ record.documents }}</td>
+        <td>{{ record.status }}</td>
+        <td>{{ record.num_nine }}</td>
+        <td>{{ record.num_td }}</td>
+        <td>
+          {% if record.path_doc %}
+            <button type="submit">Скачать</button>
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>

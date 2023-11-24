@@ -196,6 +196,6 @@ def get_doc_info(request):
         'fields': field_names
     }
     if request.method == 'POST':
-        data['records'] = get_data_fdb(HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD)
+        data['records'] = DocumentInfo.objects.all()
 
     return render(request, 'trade_logistic/fdb_data.html', context=data)
