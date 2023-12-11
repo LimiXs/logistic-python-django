@@ -1,9 +1,17 @@
 import fdb
 
-HOSTNAME = '10.137.2.146'
-DATABASE_PATH = r'D:\svxbase\svx.fdb'
-USERNAME = 'SYSDBA'
-PASSWORD = 'masterkey'
+with open(r'C:\Program Files\Firebird\settings.txt', 'r') as file:
+    lines = file.readlines()
+
+data = {}
+for line in lines:
+    key, value = line.strip().split('=')
+    data[key.strip()] = value.strip().strip("'")
+
+HOSTNAME = data.get('HOSTNAME')
+DATABASE_PATH = data.get('DATABASE_PATH')
+USERNAME = data.get('USERNAME')
+PASSWORD = data.get('PASSWORD')
 
 QUERY = """
 select first 5 (uvedoc.nomztk ||'/'||substring(uvedoc.drazm from 4 for 1)||'9'|| 
