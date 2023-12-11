@@ -1,6 +1,8 @@
 import fdb
 
-with open(r'C:\Program Files\Firebird\settings.txt', 'r') as file:
+SETTINGS_PATH = r'C:\Program Files\Firebird\settings.txt'
+
+with open(SETTINGS_PATH, 'r') as file:
     lines = file.readlines()
 
 data = {}

@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'ckeditor',
     'ckeditor_uploader',
-    'admin_extra_buttons'
+    'admin_extra_buttons',
+    'django_tables2'
 ]
 
 MIDDLEWARE = [

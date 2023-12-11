@@ -1,50 +1,50 @@
+<!-- fdb_data.html -->
 {% extends 'base.html' %}
+
 {% block content %}
 <form action="{% url 'doc_info' %}" method="post">
-  {% csrf_token %}
-  <input type="hidden" name="method" value="post">
-  <button type="submit">Добавить записи</button>
+    {% csrf_token %}
+    <input type="hidden" name="method" value="post">
+    <button type="submit">Добавить записи</button>
 </form>
+
+<form action="{% url 'doc_info' %}" method="get">
+  <input type="text" name="filter_by" placeholder="Фильтр" value="{{ current_filter }}">
+  <button type="submit">Применить фильтр</button>
+</form>
+
 <div style="overflow-x: auto;">
-  <table>
-    <thead>
-      <tr>
-        {% for field_name in fields %}
-          <th scope="col"><a href="?sort_by=date_placement">{{ field_name }}</a></th>
+    <table class="my-table">
+        <thead>
+        <tr>
+            {% for field_name in fields %}
+            <th scope="col">
+                <a href="?sort_by={{ field_name }}">{{ field_name|title }}</a>
+            </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ record.date_placement }}</td>
+            <td>{{ record.num_item }}</td>
+            <td>{{ record.num_transport }}</td>
+            <td>{{ record.num_doc }}</td>
+            <td>{{ record.date_docs }}</td>
+            <td>{{ record.documents }}</td>
+            <td>{{ record.status }}</td>
+            <td>{{ record.num_nine }}</td>
+            <td>{{ record.num_td }}</td>
+            <td>
+                {% if record.path_doc %}
+                <button type="submit">Скачать</button>
+                {% endif %}
+            </td>
+        </tr>
         {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for record in records %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ record.date_placement }}</td>
-        <td>{{ record.num_item }}</td>
-        <td>{{ record.num_transport }}</td>
-        <td>{{ record.num_doc }}</td>
-        <td>{{ record.date_docs }}</td>
-        <td>{{ record.documents }}</td>
-        <td>{{ record.status }}</td>
-        <td>{{ record.num_nine }}</td>
-        <td>{{ record.num_td }}</td>
-        <td>
-          {% if record.path_doc %}
-            <button type="submit">Скачать</button>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        </tbody>
+    </table>
 </div>
-
-<!--<ul>
-    {% for record in records %}
-        <li>{{ record }}</li>
-    {% endfor %}
-    {% for value in record %}
-        <td>{{ value }}</td>
-    {% endfor %}|truncatechars:20
-</ul>-->
-
 {% endblock %}

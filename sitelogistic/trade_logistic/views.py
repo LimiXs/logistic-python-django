@@ -1,8 +1,11 @@
 import os
 import pandas as pd
 import csv
+import django_tables2 as tables
 from io import TextIOWrapper
 
+from django.db.models import F
+from django.http import FileResponse
 from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,13 +13,17 @@ from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpRespons
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django_tables2 import SingleTableView
+
 # from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.forms import AuthenticationForm
 # from django.core.paginator import Paginator
 # from django.template.loader import render_to_string
 from .forms import *
 from .models import *
+from .tables import DocTable
 from .utils import *
+import django_tables2 as tables
 from trade_logistic.external_utils.connecter_fdb import *
 
 
@@ -186,16 +193,66 @@ def my_view(request):
     data = DocumentInfo.objects.all()
     return render(request, 'trade_logistic/display_csv.html', {'data': data})
 
+#
+# class DocsListView(ListView):
+#     model = DocumentInfo
+#     # attrs = {'class': 'my-table'}
+#     table_class = DocTable
+#     template_name = 'trade_logistic/fdb_data.html'
+#
+#     def download_file(self, request, path):
+#         file_path = os.path.join('path_to_your_files_directory', path)  # Путь к файлу
+#         print(file_path)
+#         if os.path.exists(file_path):
+#             with open(file_path, 'rb') as file:
+#                 response = FileResponse(file)
+#                 return response
+#         return None
+#
+#     def post(self, request, *args, **kwargs):
+#         if request.POST.get('method') == 'post':
+#             pass
+#
+#         if 'path' in request.GET:
+#             file_response = self.download_file(request, request.GET['path'])
+#             if file_response:
+#                 return file_response
+#
+#         return super().post(request, *args, **kwargs)
+
+
+# def get_doc_info(request):
+#     documents = DocumentInfo.objects.all()  # Получаем все объекты DocumentInfo
+#     return render(request, 'trade_logistic/fdb_data.html', {'documents': documents})
+
+from django.db.models import Q
 
 def get_doc_info(request):
     fields = DocumentInfo._meta.get_fields()
-    field_names = [field.verbose_name for field in fields]
+    field_names = [field.name for field in fields if field.name != 'id']
+
+    sort_by = request.GET.get('sort_by')
+    filter_by = request.GET.get('filter_by')  # Получаем параметр для фильтрации
+
+    records = DocumentInfo.objects.all()
+
+    if filter_by:  # Если параметр для фильтрации передан
+        # Создаем Q-объекты для фильтрации по всем полям модели
+        filter_query = Q()
+        for field_name in field_names:
+            filter_query |= Q(**{f"{field_name}__icontains": filter_by})
+
+        records = records.filter(filter_query)
+
+    if sort_by in field_names:
+        records = records.order_by(sort_by)
 
     data = {
         'menu': menu,
-        'fields': field_names
+        'fields': field_names,
+        'records': records,
+        'current_filter': filter_by  # Передаем текущее значение фильтра в шаблон
     }
-    if request.method == 'POST':
-        data['records'] = DocumentInfo.objects.all()
 
     return render(request, 'trade_logistic/fdb_data.html', context=data)
+
