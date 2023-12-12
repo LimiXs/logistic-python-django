@@ -107,14 +107,14 @@ class DocumentInfo(models.Model):
 
     date_placement = models.DateField(blank=False, verbose_name='Дата')
     num_item = models.CharField(max_length=30, unique=True, null=True, db_index=True, verbose_name='№ УВР')
-    num_transport = models.CharField(max_length=150, blank=False, null=True, db_index=True, verbose_name='№ авто')
-    num_doc = models.CharField(max_length=150, blank=False, null=True, verbose_name='№ документов')
-    date_docs = models.CharField(max_length=150, blank=False, null=True, verbose_name='Дата доков')
-    documents = models.CharField(max_length=150, blank=False, null=True, verbose_name='Документы')
-    status = models.CharField(max_length=150, blank=False, null=True, verbose_name='Статус УВР')
-    num_nine = models.CharField(max_length=10, blank=False, null=True, verbose_name='№ Длинной "9"')
+    num_transport = models.CharField(max_length=255, blank=False, null=True, db_index=True, verbose_name='№ авто')
+    num_doc = models.CharField(max_length=255, blank=False, null=True, verbose_name='№ документов')
+    date_docs = models.CharField(max_length=255, blank=False, null=True, verbose_name='Дата доков')
+    documents = models.CharField(max_length=255, blank=False, null=True, verbose_name='Документы')
+    status = models.CharField(max_length=255, blank=False, null=True, verbose_name='Статус УВР')
+    num_nine = models.CharField(max_length=30, blank=False, null=True, verbose_name='№ Длинной "9"')
     num_td = models.CharField(max_length=50, blank=False, null=True, verbose_name='Таможенное разрешение')
-    path_doc = models.CharField(max_length=150, blank=False, null=True, verbose_name='Скачать PDF')
+    path_doc = models.CharField(max_length=255, blank=False, null=True, verbose_name='Путь')
     objects = models.Manager()
 
     def __str__(self):

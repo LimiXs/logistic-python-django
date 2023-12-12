@@ -4,6 +4,7 @@ import csv
 import django_tables2 as tables
 from io import TextIOWrapper
 
+from django.db.models import Q
 from django.db.models import F
 from django.http import FileResponse
 from django.contrib.auth import logout, login
@@ -14,17 +15,19 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_tables2 import SingleTableView
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
 
 # from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.forms import AuthenticationForm
 # from django.core.paginator import Paginator
 # from django.template.loader import render_to_string
+# from trade_logistic.external_utils.connecter_fdb import *
 from .forms import *
 from .models import *
-from .tables import DocTable
+from .tables import DocTable, DocsFilter
 from .utils import *
-import django_tables2 as tables
-from trade_logistic.external_utils.connecter_fdb import *
+
 
 
 class TradeLogisticHome(DataMixin, ListView):
@@ -193,6 +196,7 @@ def my_view(request):
     data = DocumentInfo.objects.all()
     return render(request, 'trade_logistic/display_csv.html', {'data': data})
 
+
 #
 # class DocsListView(ListView):
 #     model = DocumentInfo
@@ -225,34 +229,44 @@ def my_view(request):
 #     documents = DocumentInfo.objects.all()  # Получаем все объекты DocumentInfo
 #     return render(request, 'trade_logistic/fdb_data.html', {'documents': documents})
 
-from django.db.models import Q
 
-def get_doc_info(request):
-    fields = DocumentInfo._meta.get_fields()
-    field_names = [field.name for field in fields if field.name != 'id']
+# def get_doc_info(request):
+#     fields = DocumentInfo._meta.get_fields()
+#     field_names = [field.name for field in fields if field.name != 'id']
+#
+#     sort_by = request.GET.get('sort_by')
+#     filter_by = request.GET.get('filter_by')  # Получаем параметр для фильтрации
+#
+#     records = DocumentInfo.objects.all()
+#
+#     if filter_by:  # Если параметр для фильтрации передан
+#         # Создаем Q-объекты для фильтрации по всем полям модели
+#         filter_query = Q()
+#         for field_name in field_names:
+#             filter_query |= Q(**{f"{field_name}__icontains": filter_by})
+#
+#         records = records.filter(filter_query)
+#
+#     if sort_by in field_names:
+#         records = records.order_by(sort_by)
+#
+#     data = {
+#         'menu': menu,
+#         'fields': field_names,
+#         'records': records,
+#         'current_filter': filter_by  # Передаем текущее значение фильтра в шаблон
+#     }
+#
+#     return render(request, 'trade_logistic/fdb_data.html', context=data) SingleTableView,
 
-    sort_by = request.GET.get('sort_by')
-    filter_by = request.GET.get('filter_by')  # Получаем параметр для фильтрации
 
-    records = DocumentInfo.objects.all()
+class DocsListView(DataMixin, SingleTableMixin, FilterView):
+    model = DocumentInfo
+    table_class = DocTable
+    template_name = 'trade_logistic/fdb_data.html'
 
-    if filter_by:  # Если параметр для фильтрации передан
-        # Создаем Q-объекты для фильтрации по всем полям модели
-        filter_query = Q()
-        for field_name in field_names:
-            filter_query |= Q(**{f"{field_name}__icontains": filter_by})
+    filterset_class = DocsFilter
 
-        records = records.filter(filter_query)
-
-    if sort_by in field_names:
-        records = records.order_by(sort_by)
-
-    data = {
-        'menu': menu,
-        'fields': field_names,
-        'records': records,
-        'current_filter': filter_by  # Передаем текущее значение фильтра в шаблон
-    }
-
-    return render(request, 'trade_logistic/fdb_data.html', context=data)
-
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return dict(list(context.items()))

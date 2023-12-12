@@ -1,15 +1,13 @@
 import django_tables2 as tables
 from .models import DocumentInfo
+from django_filters import FilterSet
 
 
 class DocTable(tables.Table):
-    template_name = 'django_tables2/bootstrap.html'
-    my_column = tables.TemplateColumn(verbose_name=('My Column'),
-                                      template_name='app/my_column.html',
-                                      orderable=False)  # orderable not sortable
-
     class Meta:
         model = DocumentInfo
+        attrs = {'class': 'table table-sm'}
+        template_name = 'django_tables2/bootstrap.html'
         fields = (
             'date_placement',
             'num_item',
@@ -22,3 +20,15 @@ class DocTable(tables.Table):
             'num_td',
             'path_doc'
         )
+
+    download = tables.TemplateColumn(
+        verbose_name='Кнопка',
+        template_name='trade_logistic/download_button.html',
+        visible=True
+    )
+
+
+class DocsFilter(FilterSet):
+    class Meta:
+        model = DocumentInfo
+        fields = {"date_placement": ["contains"], "num_item": ["contains"]}

@@ -412,35 +412,10 @@ ul.lang-list li a:hover {color: #fdc073;}
     font-size: 16px;
 }
 
-/* Стили для общего контейнера */
-.list-pages {
-    text-align: center;
-    margin: 20px 0;
-}
 
-/* Стили для списка */
-.list-pages ul {
-    list-style-type: none;
-    padding: 0;
-    display: inline-flex;
-}
-
-/* Стили для элементов списка */
-.list-pages li {
-    margin: 0 5px;
-}
-
-/* Стили для ссылок */
-.list-pages a {
-    background-color: #f8f9fa;
-    color: #343a40;
-    padding: 5px 10px;
-    text-decoration: none;
-    border-radius: 5px;
-}
 
 /* Стили для ссылок при наведении */
-.list-pages a:hover {
+/* .list-pages a:hover {
     background-color: #343a40;
     color: #f8f9fa;
 }
@@ -458,4 +433,8 @@ ul.lang-list li a:hover {color: #fdc073;}
 .my-table th {
     background-color: #f2f2f2;
     color: #333;
-}
+}*/
+
+/*
+
+*/
