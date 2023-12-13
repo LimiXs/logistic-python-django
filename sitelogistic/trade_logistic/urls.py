@@ -21,4 +21,5 @@ urlpatterns = [
     path('tag/<slug:tag_slug>/', views.show_tag_postlist, name='tag'),
     # path('doc-info/', views.get_doc_info, name='doc_info'),
     path('doc-info/', DocsListView.as_view(), name='doc_info'),
+    path('download/<str:path_doc>/', views.download, name='download'),
 ]

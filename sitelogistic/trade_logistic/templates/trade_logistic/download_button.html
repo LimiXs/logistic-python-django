@@ -1,3 +1,6 @@
 {% if record.path_doc %}
-    <button type="button" class="btn btn-primary">Скачать</button>
+    <form action="{% url 'download' path_doc=record.path_doc %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Скачать</button>
+    </form>
 {% endif %}
