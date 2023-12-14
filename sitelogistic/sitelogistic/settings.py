@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'admin_extra_buttons',
     'django_tables2',
-    "bootstrap3"
+    'bootstrap3',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -206,9 +207,6 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-CELERY_BEAT_SCHEDULE = {
-    'match-data-task-every-5_minutes': {
-        'task': 'trade_logistic.tasks.match_pdf_docs',
-        'schedule': crontab(minute='*/1'),
-    },
-}
+# CELERY
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'django-db'  # change this to 'django-cache' if you want to use the cache instead
