@@ -104,6 +104,7 @@ class DocumentInfo(models.Model):
     class Meta:
         verbose_name = 'Уведомление'
         verbose_name_plural = 'Уведомления'
+        ordering = ['id']
 
     date_placement = models.DateField(blank=False, verbose_name='Дата')
     num_item = models.CharField(max_length=30, unique=True, null=True, db_index=True, verbose_name='№ УВР')
