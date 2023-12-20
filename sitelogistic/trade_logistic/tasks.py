@@ -18,10 +18,15 @@
 #             # record.save()
 #         except ObjectDoesNotExist:
 #             print("Запись не найдена")
+import random
+
+from background_task import background
+
 
 # import random
 # from celery import shared_task
 #
 # @shared_task
-# def my_task():
-#     print(random.randint(1, 10))
+@background
+def my_task():
+    return random.randint(1, 10)
