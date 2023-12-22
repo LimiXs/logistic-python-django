@@ -11,15 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
-from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_URL = ''
-MEDIA_ROOT = ''
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -49,7 +45,7 @@ INSTALLED_APPS = [
     'admin_extra_buttons',
     'django_tables2',
     'bootstrap3',
-    'django_celery_results'
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +92,11 @@ DATABASES = {
     }
 }
 
+# cronjobs
+CRONJOBS = [
+    ('*/1 * * * *', 'myapp.cron.my_scheduled_job')
+]
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,6 +127,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]

@@ -17,6 +17,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_tables2 import SingleTableView, LazyPaginator
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+from django.urls import include, path
 
 # from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.forms import AuthenticationForm
