@@ -1,14 +1,15 @@
 from django.contrib import admin, messages
-from django.http import HttpResponseRedirect
-from .models import TradeLogistic, Category, TagPost, Note, DocumentInfo
 from django import forms
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from trade_logistic.external_utils.connecter_fdb import *
-from admin_extra_buttons.api import ExtraButtonsMixin, button
-from trade_logistic.external_utils.list_files import *
+from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
-PDFS_CATALOG_PATH = r'D:\khomich\test'
+from admin_extra_buttons.api import ExtraButtonsMixin, button
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+
+from sitelogistic.settings import PDFS_CATALOG_PATH
+from trade_logistic.external_utils.connecter_fdb import *
+from trade_logistic.external_utils.list_files import *
+from .models import TradeLogistic, Category, TagPost, Note, DocumentInfo
 
 
 class NoteFilter(admin.SimpleListFilter):

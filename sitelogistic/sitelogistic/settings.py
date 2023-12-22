@@ -60,6 +60,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'sitelogistic.urls'
+PDFS_CATALOG_PATH = r'D:\khomich\test'
 
 TEMPLATES = [
     {
