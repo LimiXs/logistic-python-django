@@ -1,10 +1,9 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 from django.core.exceptions import ObjectDoesNotExist
 from django_apscheduler.jobstores import DjangoJobStore
 from sitelogistic.settings import PDFS_CATALOG_PATH
-from trade_logistic.external_utils.connecter_fdb import *
 from trade_logistic.external_utils.list_files import *
-from .models import TradeLogistic, Category, TagPost, Note, DocumentInfo
+from .models import DocumentInfo
 
 
 def my_task():
@@ -20,8 +19,11 @@ def my_task():
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_jobstore(DjangoJobStore(), "default")
+    scheduler.add_jobstore(DjangoJobStore(), 'default')
     # Здесь добавьте ваши задачи...
-    scheduler.add_job(my_task, 'interval', minutes=1)
+    scheduler.add_job(my_task, 'interval', minutes=60)
     # Конец
     scheduler.start()
+
+
+start_scheduler()
