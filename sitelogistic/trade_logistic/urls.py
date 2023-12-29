@@ -23,4 +23,5 @@ urlpatterns = [
     # path('doc-info/', views.get_doc_info, name='doc_info'),
     path('doc-info/', DocsListView.as_view(), name='doc_info'),
     path('download/<str:path_doc>/', views.download, name='download'),
+    path('happy-birthdays/', views.show_happy_birthdays, name='happy_birthdays')
 ]

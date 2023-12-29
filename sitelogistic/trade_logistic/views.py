@@ -3,7 +3,9 @@ import pandas as pd
 import csv
 import django_tables2 as tables
 from io import TextIOWrapper
-
+from datetime import datetime
+import pandas
+from django.shortcuts import render
 from django.db.models import Q
 from django.db.models import F
 from django.http import FileResponse
@@ -28,7 +30,6 @@ from .forms import *
 from .models import *
 from .tables import DocTable, DocsFilter
 from .utils import *
-
 
 
 class TradeLogisticHome(DataMixin, ListView):
@@ -203,8 +204,6 @@ class DocsListView(DataMixin, SingleTableMixin, FilterView):
     table_class = DocTable
     template_name = 'trade_logistic/fdb_data.html'
     filterset_class = DocsFilter
-    # table_data = DocumentInfo.objects.all()
-    # paginator_class = LazyPaginator
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -216,3 +215,43 @@ def download(request, path_doc):
     response = FileResponse(open(file_path, 'rb'))
     response['Content-Disposition'] = f'attachment; filename="{file_path.split("/")[-1]}"'
     return response
+
+
+# def show_happy_birthdays(request):
+#     TXT_FILE = r'D:\khomich\static_sitelogistic\happy_birthdays_bts.txt'
+#     with open(TXT_FILE, 'r', encoding='utf-8') as file:
+#         for _ in range(6):
+#             next(file)
+#
+#         df = pandas.read_csv(file, delimiter='\t')
+#
+#     html_table = df.to_html()
+#
+#     return render(
+#         request,
+#         'trade_logistic/happy_birthdays.html',
+#         {'data': html_table}
+#     )
+
+def show_happy_birthdays(request):
+    TXT_FILE = r'D:\khomich\static_sitelogistic\happy_birthdays_bts.txt'
+    with open(TXT_FILE, 'r', encoding='utf-8') as file:
+        for _ in range(6):
+            next(file)
+
+        df = pd.read_csv(file, delimiter='\t')
+
+    df['Дата рождения'] = pd.to_datetime(df['Дата рождения'], format='%d.%m.%Y')
+    now = pd.Timestamp('now')
+    df['days_until_birthday'] = (df['Дата рождения'].dt.month - now.month)*30 + df['Дата рождения'].dt.day - now.day
+    df.loc[df['days_until_birthday'] < 0, 'days_until_birthday'] += 360
+    df = df.sort_values(by='days_until_birthday')
+    df = df.drop(columns=['days_until_birthday'])
+
+    html_table = df.to_html()
+
+    return render(
+        request,
+        'trade_logistic/happy_birthdays.html',
+        {'data': html_table}
+    )

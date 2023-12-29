@@ -121,11 +121,14 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def match_docs_pdf(self, request):
+
         pdf_dict = list_files(PDFS_CATALOG_PATH)
+
         for num, path in pdf_dict.items():
-            try:
-                record = DocumentInfo.objects.get(num_item=num)
-                record.path_doc = path
-                record.save()
-            except ObjectDoesNotExist:
-                print("Запись не найдена")
+            pass
+            # try:
+            #     record = DocumentInfo.objects.get(num_item=num)
+            #     record.path_doc = path
+            #     record.save()
+            # except ObjectDoesNotExist:
+            #     print("Запись не найдена")

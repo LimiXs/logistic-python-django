@@ -20,10 +20,8 @@ def my_task():
 def start_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_jobstore(DjangoJobStore(), 'default')
-    # Здесь добавьте ваши задачи...
     scheduler.add_job(my_task, 'interval', minutes=60)
-    # Конец
     scheduler.start()
 
 
-start_scheduler()
+# start_scheduler()
