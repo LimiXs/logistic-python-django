@@ -10,7 +10,7 @@ from pytesseract import Output
 PDFS_CATALOG = r'\\10.137.2.200\doc$'
 PDF_PATH = 'pdf_files/Scan20231114162725.pdf'
 LANGUAGES = 'rus+eng'
-DPI = 500
+DPI = 400
 POPPLER_PATH = r'C:\Program Files\Poppler\Library\bin'
 TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 REQ_SYMBOLS = ('-', '/',)

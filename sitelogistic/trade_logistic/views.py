@@ -217,22 +217,6 @@ def download(request, path_doc):
     return response
 
 
-# def show_happy_birthdays(request):
-#     TXT_FILE = r'D:\khomich\static_sitelogistic\happy_birthdays_bts.txt'
-#     with open(TXT_FILE, 'r', encoding='utf-8') as file:
-#         for _ in range(6):
-#             next(file)
-#
-#         df = pandas.read_csv(file, delimiter='\t')
-#
-#     html_table = df.to_html()
-#
-#     return render(
-#         request,
-#         'trade_logistic/happy_birthdays.html',
-#         {'data': html_table}
-#     )
-
 def show_happy_birthdays(request):
     TXT_FILE = r'D:\khomich\static_sitelogistic\happy_birthdays_bts.txt'
     with open(TXT_FILE, 'r', encoding='utf-8') as file:
