@@ -16,6 +16,10 @@ TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 REQ_SYMBOLS = ('-', '/',)
 
 
+def count_files(dir):
+    return len([1 for x in list(os.scandir(dir)) if x.is_file()])
+
+
 def measure_execution_time(func, *args):
     start_time = time.time()
     func(*args)
@@ -41,7 +45,7 @@ def get_info_doc_numbers(file_path):
 
         number_pdf = ''
         text = ' '.join(parsed_dict['text'])
-        text = re.sub(' +', ' ', text)  # Используем регулярные выражения для удаления лишних пробелов
+        text = re.sub(' +', ' ', text)
 
         for element in text.split(' '):
             if '-' in element and '/' in element and (len(element) == 24 or len(element) == 25):
@@ -61,4 +65,5 @@ def print_docs_number(directory):
         print(f"Нет разрешения на чтение каталога {directory}.")
 
 
-measure_execution_time(print_docs_number, PDFS_CATALOG)
+# measure_execution_time(print_docs_number, PDFS_CATALOG)
+print(count_files(PDFS_CATALOG))
