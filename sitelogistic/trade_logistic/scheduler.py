@@ -4,6 +4,11 @@ from django_apscheduler.jobstores import DjangoJobStore
 from sitelogistic.settings import PDFS_CATALOG_PATH
 from trade_logistic.external_utils.list_files import *
 from .models import DocumentInfo
+from .models import PDFDataBase
+
+
+def parsing_pdfs(PDFS_CATALOG_PATH):
+    pass
 
 
 def my_task():
@@ -17,11 +22,14 @@ def my_task():
             print("Запись не найдена")
 
 
+def do_main_task():
+    pass
+
+
 def start_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_jobstore(DjangoJobStore(), 'default')
     scheduler.add_job(my_task, 'interval', minutes=60)
     scheduler.start()
-
 
 # start_scheduler()

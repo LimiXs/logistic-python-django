@@ -123,6 +123,7 @@ class DocumentInfo(models.Model):
 
 
 class PDFDataBase(models.Model):
-    path = models.CharField(max_length=255, unique=True, null=True, db_index=True, verbose_name='Путь')
-    name_file = 1
-    doc_number = 1
+    full_path = models.CharField(max_length=255, blank=True, verbose_name='Полный путь')
+    file_name = models.CharField(max_length=30, verbose_name='Имя файла')
+    doc_number = models.CharField(max_length=70, verbose_name='Номер уведомления')
+    in_use = models.BooleanField(default=False, verbose_name='Путь найден')

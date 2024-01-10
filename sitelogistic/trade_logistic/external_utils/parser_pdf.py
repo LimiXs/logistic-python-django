@@ -1,14 +1,17 @@
+# import concurrent.futures
 import pdf2image
+import datetime
 import pytesseract
 import sys
 import os
-import time
 import re
-import concurrent.futures
+import shutil
 from pytesseract import Output
+# from trade_logistic.models import PDFDataBase
 
-PDFS_CATALOG = r'\\10.137.2.200\doc$'
-PDF_PATH = 'pdf_files/Scan20231114162725.pdf'
+
+PDFS_CATALOG_PATH = r'\\10.137.2.200\doc$'
+NOT_FOUND_PDFS_PATHS = PDFS_CATALOG_PATH + r'\not_found_doc_pdfs'
 LANGUAGES = 'rus+eng'
 DPI = 400
 POPPLER_PATH = r'C:\Program Files\Poppler\Library\bin'
@@ -16,15 +19,8 @@ TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 REQ_SYMBOLS = ('-', '/',)
 
 
-def count_files(dir):
-    return len([1 for x in list(os.scandir(dir)) if x.is_file()])
-
-
-def measure_execution_time(func, *args):
-    start_time = time.time()
-    func(*args)
-    end_time = time.time()
-    print(f"Время выполнения функции: {end_time - start_time} секунд.")
+def count_files(directory):
+    return len([1 for x in list(os.scandir(directory)) if x.is_file()])
 
 
 def get_info_doc_numbers(file_path):
@@ -36,6 +32,7 @@ def get_info_doc_numbers(file_path):
 
     pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
     number_pdf = ''
+
     for image in images:
 
         parsed_dict = pytesseract.image_to_data(image, lang=LANGUAGES, output_type=Output.DICT)
@@ -53,10 +50,14 @@ def get_info_doc_numbers(file_path):
 
 
 def print_docs_number(directory):
+    pdfs_paths = {}
     try:
         for file in os.listdir(directory):
             if os.path.isfile(os.path.join(directory, file)):
-                print(get_info_doc_numbers(os.path.join(directory, file)))
+                path = get_info_doc_numbers(os.path.join(directory, file))
+                if path is None:
+                    shutil.move(os.path.join(directory, file), NOT_FOUND_PDFS_PATHS)
+                pdfs_paths[file] = path
     except FileNotFoundError:
         print(f"Каталог {directory} не найден.")
     except NotADirectoryError:
@@ -64,6 +65,14 @@ def print_docs_number(directory):
     except PermissionError:
         print(f"Нет разрешения на чтение каталога {directory}.")
 
+    return pdfs_paths
+
 
 # measure_execution_time(print_docs_number, PDFS_CATALOG)
-print(count_files(PDFS_CATALOG))
+print(count_files(PDFS_CATALOG_PATH))
+# print(print_docs_number(PDFS_CATALOG_PATH))
+
+current_date = datetime.datetime.now()
+formatted_date = current_date.strftime('%d%m%Y')
+
+print(formatted_date)
