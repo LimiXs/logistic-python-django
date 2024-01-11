@@ -127,3 +127,7 @@ class PDFDataBase(models.Model):
     file_name = models.CharField(max_length=30, verbose_name='Имя файла')
     doc_number = models.CharField(max_length=70, verbose_name='Номер уведомления')
     in_use = models.BooleanField(default=False, verbose_name='Путь найден')
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.full_path

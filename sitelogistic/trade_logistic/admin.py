@@ -9,7 +9,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from sitelogistic.settings import PDFS_CATALOG_PATH
 from trade_logistic.external_utils.connecter_fdb import *
 from trade_logistic.external_utils.list_files import *
-from .models import TradeLogistic, Category, TagPost, Note, DocumentInfo
+from .models import *
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -76,15 +76,21 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(TagPost)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tag', 'slug')
-    list_display_links = ('id', 'tag', 'slug')
+    list_display = ('id', 'tag', 'slug',)
+    list_display_links = ('id', 'tag', 'slug',)
     prepopulated_fields = {'slug': ('tag',)}
 
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'readiness', 'readiness', 'priority')
-    list_display_links = ('id', 'name', 'readiness', 'readiness', 'priority')
+    list_display = ('id', 'name', 'readiness', 'readiness', 'priority',)
+    list_display_links = ('id', 'name', 'readiness', 'readiness', 'priority',)
+
+
+@admin.register(PDFDataBase)
+class PDFDataBaseAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in PDFDataBase._meta.fields]
+    list_display_links = ('id',)
 
 
 @admin.register(DocumentInfo)
