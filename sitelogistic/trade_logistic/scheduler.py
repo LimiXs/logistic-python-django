@@ -4,6 +4,7 @@ from django_apscheduler.jobstores import DjangoJobStore
 from sitelogistic.settings import PDFS_CATALOG_PATH
 from trade_logistic.external_utils.list_files import *
 from trade_logistic.external_utils.file_manager import *
+from .external_utils.parser_pdf import get_info_doc_numbers
 from .models import DocumentInfo
 from .models import PDFDataBase
 
@@ -14,7 +15,7 @@ def match_pdfs_docs():
     count_of_files = count_files(PDFS_CATALOG_PATH)
 
     if count_of_files == count_in_db:
-        # чекать из бд, если нашли то менять статус
+
         for entry in pdf_db_entries:
             document_info_entry = DocumentInfo.objects.filter(num_item=entry.doc_number).first()
             if document_info_entry:
@@ -22,15 +23,21 @@ def match_pdfs_docs():
                 entry.in_use = True
                 entry.save()
 
-                new_directory = '/path/to/new/directory'  # Замените на путь к новому каталогу
-                new_path = os.path.join(new_directory, os.path.basename(entry.full_path))
-                shutil.move(entry.full_path, new_path)
+                new_directory = PDFS_CATALOG_PATH + r'\download'
+                new_full_path = os.path.join(new_directory, os.path.basename(entry.full_path))
+                shutil.move(entry.full_path, new_full_path)
 
-                document_info_entry.path_doc = entry.full_path
+                document_info_entry.path_doc = new_full_path
                 document_info_entry.save()
     else:
-        # парсить новый файл и записывать в бд
-        pass
+        files_in_directory = os.listdir(PDFS_CATALOG_PATH)
+
+        for file_name in files_in_directory:
+            # проверяем, есть ли файл в базе данных
+            entry = PDFDataBase.objects.filter(full_path=os.path.join(PDFS_CATALOG_PATH, file_name)).first()
+
+            if not entry:
+                print(get_info_doc_numbers(entry))
 
 
 def my_task():
@@ -55,3 +62,4 @@ def start_scheduler():
     scheduler.start()
 
 # start_scheduler()
+match_pdfs_docs()

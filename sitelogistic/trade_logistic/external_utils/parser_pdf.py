@@ -19,10 +19,6 @@ TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 REQ_SYMBOLS = ('-', '/',)
 
 
-def count_files(directory):
-    return len([1 for x in list(os.scandir(directory)) if x.is_file()])
-
-
 def get_info_doc_numbers(file_path):
     try:
         images = pdf2image.convert_from_path(file_path, DPI, poppler_path=POPPLER_PATH)
@@ -69,10 +65,9 @@ def print_docs_number(directory):
 
 
 # measure_execution_time(print_docs_number, PDFS_CATALOG)
-print(count_files(PDFS_CATALOG_PATH))
 # print(print_docs_number(PDFS_CATALOG_PATH))
 
-current_date = datetime.datetime.now()
-formatted_date = current_date.strftime('%d%m%Y')
-
-print(formatted_date)
+# current_date = datetime.datetime.now()
+# formatted_date = current_date.strftime('%d%m%Y')
+#
+# print(formatted_date)
