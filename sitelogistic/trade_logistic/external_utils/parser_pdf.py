@@ -1,25 +1,12 @@
-# import concurrent.futures
 import pdf2image
-import datetime
 import pytesseract
 import sys
-import os
 import re
-import shutil
 from pytesseract import Output
-# from trade_logistic.models import PDFDataBase
+from trade_logistic.external_utils.miscellaneous import *
 
 
-PDFS_CATALOG_PATH = r'\\10.137.2.200\doc$'
-NOT_FOUND_PDFS_PATHS = PDFS_CATALOG_PATH + r'\not_found_doc_pdfs'
-LANGUAGES = 'rus+eng'
-DPI = 400
-POPPLER_PATH = r'C:\Program Files\Poppler\Library\bin'
-TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-REQ_SYMBOLS = ('-', '/',)
-
-
-def get_info_doc_numbers(file_path):
+def get_doc_number(file_path):
     try:
         images = pdf2image.convert_from_path(file_path, DPI, poppler_path=POPPLER_PATH)
     except FileNotFoundError:
@@ -45,23 +32,23 @@ def get_info_doc_numbers(file_path):
                 return element
 
 
-def print_docs_number(directory):
-    pdfs_paths = {}
-    try:
-        for file in os.listdir(directory):
-            if os.path.isfile(os.path.join(directory, file)):
-                path = get_info_doc_numbers(os.path.join(directory, file))
-                if path is None:
-                    shutil.move(os.path.join(directory, file), NOT_FOUND_PDFS_PATHS)
-                pdfs_paths[file] = path
-    except FileNotFoundError:
-        print(f"Каталог {directory} не найден.")
-    except NotADirectoryError:
-        print(f"{directory} не является каталогом.")
-    except PermissionError:
-        print(f"Нет разрешения на чтение каталога {directory}.")
-
-    return pdfs_paths
+# def print_docs_number(directory):
+#     pdfs_paths = {}
+#     try:
+#         for file in os.listdir(directory):
+#             if os.path.isfile(os.path.join(directory, file)):
+#                 path = get_info_doc_numbers(os.path.join(directory, file))
+#                 if path is None:
+#                     shutil.move(os.path.join(directory, file), NOT_FOUND_PDFS_PATHS)
+#                 pdfs_paths[file] = path
+#     except FileNotFoundError:
+#         print(f"Каталог {directory} не найден.")
+#     except NotADirectoryError:
+#         print(f"{directory} не является каталогом.")
+#     except PermissionError:
+#         print(f"Нет разрешения на чтение каталога {directory}.")
+#
+#     return pdfs_paths
 
 
 # measure_execution_time(print_docs_number, PDFS_CATALOG)

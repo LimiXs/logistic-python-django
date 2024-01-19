@@ -1,65 +1,71 @@
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
-from django.core.exceptions import ObjectDoesNotExist
+# from django.core.exceptions import ObjectDoesNotExist
 from django_apscheduler.jobstores import DjangoJobStore
-from sitelogistic.settings import PDFS_CATALOG_PATH
-from trade_logistic.external_utils.list_files import *
 from trade_logistic.external_utils.file_manager import *
-from .external_utils.parser_pdf import get_info_doc_numbers
+
+from .external_utils.parser_pdf import *
 from .models import DocumentInfo
 from .models import PDFDataBase
+
+scheduler = None
 
 
 def match_pdfs_docs():
     pdf_db_entries = PDFDataBase.objects.filter(in_use=False)
+
     count_in_db = pdf_db_entries.count()
     count_of_files = count_files(PDFS_CATALOG_PATH)
+    print(count_in_db, count_of_files)
 
     if count_of_files == count_in_db:
-
-        for entry in pdf_db_entries:
-            document_info_entry = DocumentInfo.objects.filter(num_item=entry.doc_number).first()
-            if document_info_entry:
-
-                entry.in_use = True
-                entry.save()
-
-                new_directory = PDFS_CATALOG_PATH + r'\download'
-                new_full_path = os.path.join(new_directory, os.path.basename(entry.full_path))
-                shutil.move(entry.full_path, new_full_path)
-
-                document_info_entry.path_doc = new_full_path
-                document_info_entry.save()
+        print(True)
+        # for entry in pdf_db_entries:
+        #     document_info_entry = DocumentInfo.objects.filter(num_item=entry.doc_number).first()
+        #     if document_info_entry:
+        #
+        #         entry.in_use = True
+        #         entry.save()
+        #
+        #         new_directory = PDFS_CATALOG_PATH + r'\download'
+        #         new_full_path = os.path.join(new_directory, os.path.basename(entry.full_path))
+        #         shutil.move(entry.full_path, new_full_path)
+        #
+        #         document_info_entry.path_doc = new_full_path
+        #         document_info_entry.save()
     else:
-        files_in_directory = os.listdir(PDFS_CATALOG_PATH)
 
-        for file_name in files_in_directory:
-            # проверяем, есть ли файл в базе данных
-            entry = PDFDataBase.objects.filter(full_path=os.path.join(PDFS_CATALOG_PATH, file_name)).first()
-
+        directory = os.listdir(PDFS_CATALOG_PATH)
+        for file in directory:
+            file_path = os.path.join(PDFS_CATALOG_PATH, file)
+            entry = PDFDataBase.objects.filter(full_path=file_path).first()
             if not entry:
-                print(get_info_doc_numbers(entry))
+                doc_number = get_doc_number(file_path)
+                if doc_number is None:
+                    move_file(file_path, NOT_FOUND_PDFS_PATHS)
 
-
-def my_task():
-    pdf_dict = list_files(PDFS_CATALOG_PATH)
-    for num, path in pdf_dict.items():
-        try:
-            record = DocumentInfo.objects.get(num_item=num)
-            record.path_doc = path
-            record.save()
-        except ObjectDoesNotExist:
-            print("Запись не найдена")
-
-
-def do_main_task():
-    pass
+                # entry = PDFDataBase(full_path=file_path, file_name=file)
+                # entry.doc_number = get_doc_number(file_path)
+                # entry.save()
 
 
 def start_scheduler():
-    scheduler = BackgroundScheduler()
-    scheduler.add_jobstore(DjangoJobStore(), 'default')
-    scheduler.add_job(my_task, 'interval', minutes=60)
-    scheduler.start()
+    global scheduler
+    if scheduler is None:
+        scheduler = BackgroundScheduler()
+        scheduler.add_jobstore(DjangoJobStore(), 'default')
+        scheduler.add_job(match_pdfs_docs, 'interval', minutes=2)
+        scheduler.start()
 
-# start_scheduler()
-match_pdfs_docs()
+
+start_scheduler()
+
+
+# def my_task():
+#     pdf_dict = list_files(PDFS_CATALOG_PATH)
+#     for num, path in pdf_dict.items():
+#         try:
+#             record = DocumentInfo.objects.get(num_item=num)
+#             record.path_doc = path
+#             record.save()
+#         except ObjectDoesNotExist:
+#             print("Запись не найдена")

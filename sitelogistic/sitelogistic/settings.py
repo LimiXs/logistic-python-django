@@ -60,7 +60,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'sitelogistic.urls'
-PDFS_CATALOG_PATH = r'D:\khomich\test'
 
 TEMPLATES = [
     {
@@ -207,20 +206,6 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
-
-# CELERY
-# CELERY_BROKER_URL = 'redis://127.0.0.1:8000'
-# CELERY_RESULT_BACKEND = 'django-cache'  # change this to 'django-cache' if you want to use the cache instead
-#
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:8000',
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
 
 LOGGING = {
     'version': 1,

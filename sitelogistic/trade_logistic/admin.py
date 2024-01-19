@@ -6,9 +6,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from admin_extra_buttons.api import ExtraButtonsMixin, button
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
-from sitelogistic.settings import PDFS_CATALOG_PATH
 from trade_logistic.external_utils.connecter_fdb import *
 from trade_logistic.external_utils.list_files import *
+from .external_utils.miscellaneous import PDFS_CATALOG_PATH
 from .models import *
 
 
