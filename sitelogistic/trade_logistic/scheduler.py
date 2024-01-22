@@ -17,31 +17,38 @@ def match_pdfs_docs():
     count_of_files = count_files(PDFS_CATALOG_PATH)
     print(count_in_db, count_of_files)
 
-    if count_of_files == count_in_db:
-        print(True)
-        # for entry in pdf_db_entries:
-        #     document_info_entry = DocumentInfo.objects.filter(num_item=entry.doc_number).first()
-        #     if document_info_entry:
-        #
-        #         entry.in_use = True
-        #         entry.save()
-        #
-        #         new_directory = PDFS_CATALOG_PATH + r'\download'
-        #         new_full_path = os.path.join(new_directory, os.path.basename(entry.full_path))
-        #         shutil.move(entry.full_path, new_full_path)
-        #
-        #         document_info_entry.path_doc = new_full_path
-        #         document_info_entry.save()
-    else:
-
-        directory = os.listdir(PDFS_CATALOG_PATH)
-        for file in directory:
+    directory = os.listdir(PDFS_CATALOG_PATH)
+    for file in directory:
+        file_path = os.path.join(PDFS_CATALOG_PATH, file)
+        print(file_path)
+        if not check_file_exists(DOWNLOAD_PDFS_PATHS, file):
             file_path = os.path.join(PDFS_CATALOG_PATH, file)
-            entry = PDFDataBase.objects.filter(full_path=file_path).first()
-            if not entry:
-                doc_number = get_doc_number(file_path)
-                if doc_number is None:
-                    move_file(file_path, NOT_FOUND_PDFS_PATHS)
+            move_file(file_path, DOWNLOAD_PDFS_PATHS)
+    # if count_of_files == count_in_db:
+    #     print(True)
+    #     # for entry in pdf_db_entries:
+    #     #     document_info_entry = DocumentInfo.objects.filter(num_item=entry.doc_number).first()
+    #     #     if document_info_entry:
+    #     #
+    #     #         entry.in_use = True
+    #     #         entry.save()
+    #     #
+    #     #         new_directory = PDFS_CATALOG_PATH + r'\download'
+    #     #         new_full_path = os.path.join(new_directory, os.path.basename(entry.full_path))
+    #     #         shutil.move(entry.full_path, new_full_path)
+    #     #
+    #     #         document_info_entry.path_doc = new_full_path
+    #     #         document_info_entry.save()
+    # else:
+    #     pass
+    #     directory = os.listdir(PDFS_CATALOG_PATH)
+    #     for file in directory:
+    #         file_path = os.path.join(PDFS_CATALOG_PATH, file)
+    #         entry = PDFDataBase.objects.filter(full_path=file_path).first()
+    #         if not entry:
+    #             doc_number = get_doc_number(file_path)
+    #             if doc_number is None:
+    #                 move_file(file_path, NOT_FOUND_PDFS_PATHS)
 
                 # entry = PDFDataBase(full_path=file_path, file_name=file)
                 # entry.doc_number = get_doc_number(file_path)

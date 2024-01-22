@@ -6,18 +6,29 @@ def count_files(catalog):
     return len([1 for x in list(os.scandir(catalog)) if x.is_file()])
 
 
-def move_file(full_path, place):
-    shutil.move(full_path, place)
+def move_file(full_path, new_directory):
+    shutil.move(full_path, new_directory)
 
 
-# class FilesManager:
-#     def __init__(self, directory):
-#         self.directory = directory
-#
-#     def get_files_count(self):
-#         return len([f for f in os.listdir(self.directory) if os.path.isfile(os.path.join(self.directory, f))])
-#
-#     def move_file(self, file_name, new_directory):
-#         old_file_path = os.path.join(self.directory, file_name)
-#         new_file_path = os.path.join(new_directory, file_name)
-#         shutil.move(old_file_path, new_file_path)
+def check_file_exists(directory, filename):
+    file_path = os.path.join(directory, filename)
+    return os.path.isfile(file_path)
+
+
+class FileManager:
+    def __init__(self, directory: str):
+        self.directory = directory
+
+    def count_files(self) -> int:
+        return len([1 for x in list(os.scandir(self.directory)) if x.is_file()])
+
+    def move_file(self, filename: str, new_directory: str):
+        full_path = os.path.join(self.directory, filename)
+        if os.path.isfile(full_path):
+            shutil.move(full_path, new_directory)
+        else:
+            print(f"Файл {filename} не найден в {self.directory}")
+
+    def check_file_exists(self, filename: str) -> bool:
+        file_path = os.path.join(self.directory, filename)
+        return os.path.isfile(file_path)
