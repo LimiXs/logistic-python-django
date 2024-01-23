@@ -8,7 +8,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from trade_logistic.external_utils.connecter_fdb import *
 from trade_logistic.external_utils.list_files import *
-from .external_utils.miscellaneous import PDFS_CATALOG_PATH
+# from .external_utils.miscellaneous import CATALOG_PDFS
 from .models import *
 
 

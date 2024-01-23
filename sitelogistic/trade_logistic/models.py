@@ -123,10 +123,14 @@ class DocumentInfo(models.Model):
 
 
 class PDFDataBase(models.Model):
+    doc_number = models.CharField(max_length=70, unique=True, verbose_name='Номер уведомления')
     full_path = models.CharField(max_length=255, blank=True, verbose_name='Полный путь')
-    file_name = models.CharField(max_length=30, verbose_name='Имя файла')
-    doc_number = models.CharField(max_length=70, verbose_name='Номер уведомления')
+    file_name = models.CharField(max_length=30, blank=True, verbose_name='Имя файла')
     in_use = models.BooleanField(default=False, verbose_name='Путь найден')
+    # date_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    # date_updated = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
+    # doc_id = models.OneToOneField('Note', on_delete=models.SET_NULL, null=True, blank=True,
+    #                               related_name='uv_doc', verbose_name='Документ')
     objects = models.Manager()
 
     def __str__(self):
