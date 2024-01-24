@@ -7,10 +7,11 @@ def count_files(catalog):
 
 
 def move_file(full_path, new_directory):
+
     shutil.move(full_path, new_directory)
 
 
-def check_file_exists(directory, filename):
+def file_exists(directory, filename):
     file_path = os.path.join(directory, filename)
     return os.path.isfile(file_path)
 
