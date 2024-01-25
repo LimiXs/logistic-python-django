@@ -1,14 +1,11 @@
 from django.contrib import admin, messages
 from django import forms
 from django.http import HttpResponseRedirect
-from django.core.exceptions import ObjectDoesNotExist
 
 from admin_extra_buttons.api import ExtraButtonsMixin, button
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from trade_logistic.external_utils.connecter_fdb import *
-from trade_logistic.external_utils.list_files import *
-# from .external_utils.miscellaneous import CATALOG_PDFS
 from .models import *
 
 
@@ -121,20 +118,20 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    @button(
-        label='Найти pdf',
-        change_form=True,
-        html_attrs={"class": 'btn-primary'}
-    )
-    def match_docs_pdf(self, request):
-
-        pdf_dict = list_files(PDFS_CATALOG_PATH)
-
-        for num, path in pdf_dict.items():
-            pass
-            # try:
-            #     record = DocumentInfo.objects.get(num_item=num)
-            #     record.path_doc = path
-            #     record.save()
-            # except ObjectDoesNotExist:
-            #     print("Запись не найдена")
+    # @button(
+    #     label='Найти pdf',
+    #     change_form=True,
+    #     html_attrs={"class": 'btn-primary'}
+    # )
+    # def match_docs_pdf(self, request):
+    #
+    #     pdf_dict = list_files(PDFS_CATALOG_PATH)
+    #
+    #     for num, path in pdf_dict.items():
+    #         pass
+    #         try:
+    #             record = DocumentInfo.objects.get(num_item=num)
+    #             record.path_doc = path
+    #             record.save()
+    #         except ObjectDoesNotExist:
+    #             print("Запись не найдена")
