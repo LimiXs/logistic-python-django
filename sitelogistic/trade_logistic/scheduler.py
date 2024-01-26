@@ -1,6 +1,8 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+from django.http import HttpResponseRedirect
 from django_apscheduler.jobstores import DjangoJobStore
 from trade_logistic.external_utils.file_manager import *
+from .external_utils.connecter_fdb import get_data_fdb, HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD
 
 from .external_utils.parser_pdf import *
 from .models import DocumentInfo
@@ -43,6 +45,25 @@ def match_pdfs_docs():
 
             pdf.in_use = True
             pdf.save()
+
+
+def upload_docs_db(request):
+    records = get_data_fdb(HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD)
+    for record in records:
+        if not DocumentInfo.objects.filter(num_item=record[0]).exists():
+            DocumentInfo.objects.create(
+                date_placement=record[1],
+                num_item=record[0],
+                num_transport=record[3].replace(';', '; '),
+                num_doc=record[4],
+                date_docs=record[7],
+                documents=record[6],
+                status=record[9],
+                num_nine=record[10],
+                num_td=record[11] if record[11] is None else record[11][:30].replace(';', '; ')
+            )
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def start_scheduler():
