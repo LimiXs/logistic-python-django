@@ -16,27 +16,27 @@ USERNAME = data.get('USERNAME')
 PASSWORD = data.get('PASSWORD')
 
 QUERY = """
-select first 5 (uvedoc.nomztk ||'/'||substring(uvedoc.drazm from 4 for 1)||'9'|| 
-substring (sum(1000000 + uvedoc.numitem) / count(prildoc.docid) from 2 for 7)) as numer,
+SELECT (uvedoc.nomztk ||'/'||substring(uvedoc.drazm FROM 4 FOR 1)||'9'|| 
+SUBSTRING(sum(1000000 + uvedoc.numitem) / count(prildoc.docid) FROM 2 FOR 7)) AS numer,
 uvedoc.drazm,
 uvedoc.numitem,
 uvedoc.transp_num,
-LIST (prildoc.numdoc, '; ') as numdoc,
-LIST (prildoc.typdid, '; ') as typdid,
-LIST(NSITYPDOC.naim,'; ') as naim,
-LIST(prildoc.dtdoc, '; ') as dtdoc,
+LIST (prildoc.numdoc, '; ') AS numdoc,
+LIST (prildoc.typdid, '; ') AS typdid,
+LIST(NSITYPDOC.naim,'; ') AS naim,
+LIST(prildoc.dtdoc, '; ') AS dtdoc,
 uvedoc.docstate,
 uvedoc.date_ss,
 uvedoc.regnum_pto,
-LIST(custrazr.numtd, ';') as numtd
-from uvedoc
-left outer join prildoc on uvedoc.docid = prildoc.docid
-left outer join NSITYPDOC on prildoc.typdid = NSITYPDOC.typdid
-left outer join custrazr on uvedoc.docid = custrazr.docid
-where
+LIST(custrazr.numtd, ';') AS numtd
+FROM uvedoc
+LEFT OUTER JOIN prildoc ON uvedoc.docid = prildoc.docid
+LEFT OUTER JOIN NSITYPDOC ON prildoc.typdid = NSITYPDOC.typdid
+LEFT OUTER JOIN custrazr ON uvedoc.docid = custrazr.docid
+WHERE
 uvedoc.drazm >= current_date -1
-group by uvedoc.nomztk, uvedoc.drazm, uvedoc.numitem, uvedoc.transp_num, uvedoc.docstate, uvedoc.date_ss,
-uvedoc.regnum_pto
+GROUP BY uvedoc.nomztk, uvedoc.drazm, uvedoc.numitem, uvedoc.transp_num,
+uvedoc.docstate, uvedoc.date_ss, uvedoc.regnum_pto
 """
 CYRILLIC_TO_LATIN = {
         'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M', 'Н': 'H', 'О': 'O',

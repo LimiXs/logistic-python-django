@@ -3,7 +3,6 @@ import pandas as pd
 import csv
 import django_tables2 as tables
 from io import TextIOWrapper
-from datetime import datetime
 import pandas
 from django.shortcuts import render
 from django.db.models import Q

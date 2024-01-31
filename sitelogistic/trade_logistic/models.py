@@ -119,7 +119,7 @@ class DocumentInfo(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.num_item
+        return self.num_item or ''
 
 
 class PDFDataBase(models.Model):
@@ -134,4 +134,4 @@ class PDFDataBase(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.full_path
+        return self.doc_number or ''
