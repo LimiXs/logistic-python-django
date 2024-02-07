@@ -68,9 +68,15 @@ def start_scheduler():
     if scheduler is None:
         scheduler = BackgroundScheduler()
         scheduler.add_jobstore(DjangoJobStore(), 'default')
-        scheduler.add_job(upload_docs_db, 'interval', minutes=30)
-        scheduler.add_job(match_pdfs_docs, 'interval', minutes=5)
+        scheduler.add_job(upload_docs_db, 'interval', minutes=10)
+        scheduler.add_job(match_pdfs_docs, 'interval', minutes=15)
         scheduler.start()
 
 
-start_scheduler()
+def stop_scheduler():
+    global scheduler
+    if scheduler:
+        scheduler.shutdown()
+        scheduler = None
+
+

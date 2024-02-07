@@ -7,6 +7,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from trade_logistic.external_utils.connecter_fdb import *
 from .models import *
+from .scheduler import start_scheduler, stop_scheduler
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -118,6 +119,21 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+    @button(
+        label='Запустить планировщик',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def admin_start_scheduler(self, request):
+        start_scheduler()
+
+    @button(
+        label='Остановить планировщик',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def admin_stop_scheduler(self, request):
+        stop_scheduler()
     # @button(
     #     label='Найти pdf',
     #     change_form=True,
