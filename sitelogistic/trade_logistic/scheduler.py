@@ -10,6 +10,24 @@ from .models import PDFDataBase
 scheduler = None
 
 
+class Scheduler:
+    def __init__(self):
+        self.scheduler = None
+
+    def start_scheduler(self, *tasks):
+        if self.scheduler is None:
+            self.scheduler = BackgroundScheduler()
+            self.scheduler.add_jobstore(DjangoJobStore(), 'default')
+            for task in tasks:
+                self.scheduler.add_job(task['func'], 'interval', minutes=task['interval'])
+            self.scheduler.start()
+
+    def stop_scheduler(self):
+        if self.scheduler:
+            self.scheduler.shutdown()
+            self.scheduler = None
+
+
 def match_pdfs_docs():
     count_of_files = count_files(CATALOG_PDFS)
 

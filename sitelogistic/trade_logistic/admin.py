@@ -7,7 +7,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from trade_logistic.external_utils.connecter_fdb import *
 from .models import *
-from .scheduler import start_scheduler, stop_scheduler
+from .scheduler import match_pdfs_docs, upload_docs_db, Scheduler
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -96,6 +96,8 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = [field.name for field in DocumentInfo._meta.get_fields()]
     list_display_links = ('id', 'num_item',)
 
+    scheduler = Scheduler()
+
     @button(
         label='Загрузить данные',
         change_form=True,
@@ -125,7 +127,7 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def admin_start_scheduler(self, request):
-        start_scheduler()
+        self.start_scheduler(match_pdfs_docs, upload_docs_db, i)
 
     @button(
         label='Остановить планировщик',
