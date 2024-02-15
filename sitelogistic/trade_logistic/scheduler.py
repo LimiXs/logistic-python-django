@@ -7,8 +7,6 @@ from .external_utils.parser_pdf import *
 from .models import DocumentInfo
 from .models import PDFDataBase
 
-scheduler = None
-
 
 class Scheduler:
     def __init__(self):
@@ -81,20 +79,20 @@ def upload_docs_db():
             )
 
 
-def start_scheduler():
-    global scheduler
-    if scheduler is None:
-        scheduler = BackgroundScheduler()
-        scheduler.add_jobstore(DjangoJobStore(), 'default')
-        scheduler.add_job(upload_docs_db, 'interval', minutes=10)
-        scheduler.add_job(match_pdfs_docs, 'interval', minutes=15)
-        scheduler.start()
-
-
-def stop_scheduler():
-    global scheduler
-    if scheduler:
-        scheduler.shutdown()
-        scheduler = None
-
+# def start_scheduler():
+#     global scheduler
+#     if scheduler is None:
+#         scheduler = BackgroundScheduler()
+#         scheduler.add_jobstore(DjangoJobStore(), 'default')
+#         scheduler.add_job(upload_docs_db, 'interval', minutes=10)
+#         scheduler.add_job(match_pdfs_docs, 'interval', minutes=15)
+#         scheduler.start()
+#
+#
+# def stop_scheduler():
+#     global scheduler
+#     if scheduler:
+#         scheduler.shutdown()
+#         scheduler = None
+#
 

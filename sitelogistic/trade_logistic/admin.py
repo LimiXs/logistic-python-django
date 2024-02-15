@@ -10,6 +10,7 @@ from .models import *
 from .scheduler import match_pdfs_docs, upload_docs_db, Scheduler
 
 
+
 class NoteFilter(admin.SimpleListFilter):
     title = 'Статус модуля'
     parameter_name = 'status'
@@ -127,7 +128,10 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def admin_start_scheduler(self, request):
-        self.start_scheduler(match_pdfs_docs, upload_docs_db, i)
+        self.scheduler.start_scheduler(
+            {'func': match_pdfs_docs, 'interval': 10},
+            {'func': upload_docs_db, 'interval': 15}
+         )
 
     @button(
         label='Остановить планировщик',
@@ -135,21 +139,9 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         html_attrs={"class": 'btn-primary'}
     )
     def admin_stop_scheduler(self, request):
-        stop_scheduler()
+        self.scheduler.stop_scheduler()
     # @button(
     #     label='Найти pdf',
     #     change_form=True,
     #     html_attrs={"class": 'btn-primary'}
     # )
-    # def match_docs_pdf(self, request):
-    #
-    #     pdf_dict = list_files(PDFS_CATALOG_PATH)
-    #
-    #     for num, path in pdf_dict.items():
-    #         pass
-    #         try:
-    #             record = DocumentInfo.objects.get(num_item=num)
-    #             record.path_doc = path
-    #             record.save()
-    #         except ObjectDoesNotExist:
-    #             print("Запись не найдена")

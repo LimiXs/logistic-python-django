@@ -14,18 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import threading
-
+# import threading
+# from django.urls import path, include
+# from trade_logistic import views
+# from django.apps import apps
 from django.contrib import admin
-from django.urls import path, include
-from trade_logistic import views
 from trade_logistic.views import page_not_found
-from django.apps import apps
 from django.urls import include, path
-from trade_logistic.scheduler import start_scheduler
-
-if not apps.ready and not any([m.name for m in threading.enumerate() if m.name == 'apscheduler']):
-    start_scheduler()
 
 
 urlpatterns = [
