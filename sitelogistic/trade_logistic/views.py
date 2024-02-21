@@ -206,6 +206,7 @@ class DocsListView(DataMixin, SingleTableMixin, FilterView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['table'].paginate = False  # Отключаем автоматическую пагинацию
         return dict(list(context.items()))
 
 

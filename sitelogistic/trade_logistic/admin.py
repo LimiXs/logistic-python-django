@@ -96,6 +96,8 @@ class PDFDataBaseAdmin(admin.ModelAdmin):
 class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = [field.name for field in DocumentInfo._meta.get_fields()]
     list_display_links = ('id', 'num_item',)
+    list_filter = ('num_item',)
+    search_fields = ('num_item',)
 
     scheduler = Scheduler()
 

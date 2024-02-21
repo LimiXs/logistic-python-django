@@ -3,4 +3,6 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">Скачать</button>
     </form>
+{% else %}
+    Нет файла для скачивания
 {% endif %}

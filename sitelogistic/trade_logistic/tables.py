@@ -18,13 +18,13 @@ class DocTable(tables.Table):
             'status',
             'num_nine',
             'num_td',
-            'path_doc'
         )
 
     download = tables.TemplateColumn(
-        verbose_name='Кнопка',
+        verbose_name='Путь/Кнопка',
         template_name='trade_logistic/download_button.html',
-        visible=True
+        visible=True,
+        order_by=('path_doc',)
     )
 
 
