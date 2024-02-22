@@ -41,6 +41,7 @@ def match_pdfs_docs():
             else:
                 new_directory = CATALOG_DOWNLOAD_PDFS
                 download_path = os.path.join(CATALOG_DOWNLOAD_PDFS, file)
+                doc_number
                 try:
                     record = PDFDataBase(doc_number=doc_number, full_path=download_path, file_name=file)
                     record.save()

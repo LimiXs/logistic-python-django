@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from .models import DocumentInfo
 from django_filters import FilterSet
+from django_filters import DateFromToRangeFilter
 
 
 class DocTable(tables.Table):
@@ -29,6 +30,8 @@ class DocTable(tables.Table):
 
 
 class DocsFilter(FilterSet):
+    date_placement = DateFromToRangeFilter()
+
     class Meta:
         model = DocumentInfo
-        fields = {"date_placement": ["contains"], "num_item": ["contains"]}
+        fields = {"num_item": ["contains"]}

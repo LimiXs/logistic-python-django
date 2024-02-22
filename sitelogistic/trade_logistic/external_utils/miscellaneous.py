@@ -11,3 +11,4 @@ DPI = 400
 POPPLER_PATH = r'C:\Program Files\Poppler\Library\bin'
 TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 REQ_SYMBOLS = ('-', '/',)
+

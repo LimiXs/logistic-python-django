@@ -8,7 +8,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from trade_logistic.external_utils.connecter_fdb import *
 from .models import *
 from .scheduler import match_pdfs_docs, upload_docs_db, Scheduler
-
+from .utils import MAPPING
 
 
 class NoteFilter(admin.SimpleListFilter):
@@ -87,9 +87,23 @@ class NoteAdmin(admin.ModelAdmin):
 
 
 @admin.register(PDFDataBase)
-class PDFDataBaseAdmin(admin.ModelAdmin):
+class PDFDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = [field.name for field in PDFDataBase._meta.fields]
     list_display_links = ('id',)
+
+    @button(
+        label='Обновить символы',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def update_chars(self, request):
+        records = PDFDataBase.objects.all()
+        for record in records:
+            for english_char, russian_char in MAPPING.items():
+                record.doc_number = record.doc_number.replace(english_char, russian_char)
+            record.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @admin.register(DocumentInfo)
@@ -98,6 +112,7 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display_links = ('id', 'num_item',)
     list_filter = ('num_item',)
     search_fields = ('num_item',)
+    list_per_page = 6
 
     scheduler = Scheduler()
 
@@ -134,6 +149,7 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
             {'func': match_pdfs_docs, 'interval': 10},
             {'func': upload_docs_db, 'interval': 15}
          )
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     @button(
         label='Остановить планировщик',
@@ -147,3 +163,4 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     #     change_form=True,
     #     html_attrs={"class": 'btn-primary'}
     # )
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
