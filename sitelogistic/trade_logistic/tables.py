@@ -1,4 +1,5 @@
 import django_tables2 as tables
+from django import forms
 from .models import DocumentInfo
 from django_filters import FilterSet
 from django_filters import DateFromToRangeFilter
@@ -30,8 +31,12 @@ class DocTable(tables.Table):
 
 
 class DocsFilter(FilterSet):
-    date_placement = DateFromToRangeFilter()
+    date_placement = DateFromToRangeFilter(
+        widget=forms.DateInput(attrs={'class': 'datepicker'})
+    )
 
     class Meta:
         model = DocumentInfo
         fields = {"num_item": ["contains"]}
+
+

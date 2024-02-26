@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'bootstrap3',
     'django_apscheduler',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
