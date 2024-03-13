@@ -31,12 +31,10 @@ class DocTable(tables.Table):
 
 
 class DocsFilter(FilterSet):
-    date_placement = DateFromToRangeFilter(
-        widget=forms.DateInput(attrs={'class': 'datepicker'})
-    )
+    # date_placement = DateFromToRangeFilter(
+    #     widget=forms.DateInput(attrs={'class': 'datepicker'})
+    # )
 
     class Meta:
         model = DocumentInfo
-        fields = {"num_item": ["contains"]}
-
-
+        fields = {"num_item": ["contains"], "date_placement": ["contains"]}

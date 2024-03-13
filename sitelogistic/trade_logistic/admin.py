@@ -164,3 +164,11 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     #     html_attrs={"class": 'btn-primary'}
     # )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@admin.register(DocumentInfo)
+class ERIPDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
+    list_display = [field.name for field in DocumentInfo._meta.get_fields()]
+    list_display_links = ('id', 'id_account',)
+    search_fields = ('id_account',)
+    list_per_page = 10

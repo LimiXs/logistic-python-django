@@ -135,3 +135,15 @@ class PDFDataBase(models.Model):
 
     def __str__(self):
         return self.doc_number or ''
+
+
+class ERIPDataBase(models.Model):
+    id_account = models.CharField(max_length=20, unique=False, verbose_name='Счёт договора')
+    payer_name = models.CharField(max_length=100, unique=True, verbose_name='ФИО плательщика')
+    bill_pay = models.IntegerField(verbose_name='Сумма оплаты')
+    date = models.DateField(verbose_name='Дата оплаты')
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.id_account or ''
