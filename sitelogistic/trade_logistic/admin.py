@@ -6,6 +6,7 @@ from admin_extra_buttons.api import ExtraButtonsMixin, button
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from trade_logistic.external_utils.connecter_fdb import *
+from .management.commands.read_files_erip import Command
 from .models import *
 from .scheduler import match_pdfs_docs, upload_docs_db, Scheduler
 from .utils import MAPPING
@@ -166,9 +167,23 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@admin.register(DocumentInfo)
-class ERIPDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
-    list_display = [field.name for field in DocumentInfo._meta.get_fields()]
+@admin.register(ERIPDataBase)
+class ERIPDataBaseAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in ERIPDataBase._meta.get_fields()]
     list_display_links = ('id', 'id_account',)
     search_fields = ('id_account',)
-    list_per_page = 10
+
+    actions = ['delete_all']
+
+    @button(label='Загрузить данные', change_form=True, html_attrs={"class": 'btn-primary'})
+    def load_data(self, request):
+        Command().handle()
+        self.message_user(request, "Данные успешно загружены", level=messages.SUCCESS)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    def delete_all(self, request, queryset):
+        ERIPDataBase.objects.all().delete()
+        self.message_user(request, "Все записи были успешно удалены", level=messages.SUCCESS)
+    delete_all.short_description = "Удалить все записи"
+
+
