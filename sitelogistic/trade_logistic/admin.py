@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django import forms
 from django.http import HttpResponseRedirect
+from django.db import connection
 
 from admin_extra_buttons.api import ExtraButtonsMixin, button
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -168,22 +169,25 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
 
 
 @admin.register(ERIPDataBase)
-class ERIPDataBaseAdmin(admin.ModelAdmin):
+class ERIPDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = [field.name for field in ERIPDataBase._meta.get_fields()]
     list_display_links = ('id', 'id_account',)
     search_fields = ('id_account',)
 
-    actions = ['delete_all']
+    @button(label='Удалить все и сбросить автоинкремент', change_form=True, html_attrs={"class": 'btn-primary'})
+    def delete_all_and_reset(self, request):
+        ERIPDataBase.objects.all().delete()
+        self.message_user(request, "Все данные успешно удалены", level=messages.SUCCESS)
+
+        table_name = ERIPDataBase._meta.db_table
+        with connection.cursor() as cursor:
+            cursor.execute(f"DELETE FROM sqlite_sequence WHERE name='{table_name}';")
+        self.message_user(request, "Автоинкремент успешно сброшен", level=messages.SUCCESS)
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     @button(label='Загрузить данные', change_form=True, html_attrs={"class": 'btn-primary'})
     def load_data(self, request):
         Command().handle()
         self.message_user(request, "Данные успешно загружены", level=messages.SUCCESS)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-    def delete_all(self, request, queryset):
-        ERIPDataBase.objects.all().delete()
-        self.message_user(request, "Все записи были успешно удалены", level=messages.SUCCESS)
-    delete_all.short_description = "Удалить все записи"
-
-

@@ -221,3 +221,5 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+SILENCED_SYSTEM_CHECKS = ["auth.W004"]

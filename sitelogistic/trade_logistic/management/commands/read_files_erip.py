@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
         for filename in os.listdir(directory):
             file_path = os.path.join(directory, filename)
-            file_time = os.path.getctime(file_path)  # Изменено здесь
+            file_time = os.path.getctime(file_path)
 
             if last_read_time is None or file_time > last_read_time:
                 with open(file_path, 'r') as file:
