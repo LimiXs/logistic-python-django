@@ -1,5 +1,4 @@
 import os
-import time
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from trade_logistic.models import ERIPDataBase
@@ -28,6 +27,9 @@ class Command(BaseCommand):
 
                         date = data_list[9]
                         date = datetime.strptime(date, "%Y%m%d%H%M%S") if date else None
+
+                        if date:
+                            date = timezone.make_aware(date, timezone.get_default_timezone())
 
                         erip_data = ERIPDataBase(
                             id_account=data_list[2],
