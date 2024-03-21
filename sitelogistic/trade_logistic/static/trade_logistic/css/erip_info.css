@@ -1,0 +1,23 @@
+/* erip_info.css */
+.container {
+    margin-top: 5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem!important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.django-tables2-pagination ul {
+    display: flex;
+    justify-content: center;
+}
+
+.django-tables2-pagination li {
+    margin: 0 5px;
+}

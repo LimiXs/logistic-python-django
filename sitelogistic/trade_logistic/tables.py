@@ -1,8 +1,7 @@
 import django_tables2 as tables
 from django import forms
-from .models import DocumentInfo
-from django_filters import FilterSet
-from django_filters import DateFromToRangeFilter
+from .models import DocumentInfo, ERIPDataBase
+from django_filters import FilterSet, CharFilter, DateFromToRangeFilter
 
 
 class DocTable(tables.Table):
@@ -38,3 +37,27 @@ class DocsFilter(FilterSet):
     class Meta:
         model = DocumentInfo
         fields = {"num_item": ["contains"], "date_placement": ["contains"]}
+
+
+class ERIPTable(tables.Table):
+    class Meta:
+        model = ERIPDataBase
+        attrs = {'class': 'table table-sm'}
+        template_name = 'django_tables2/bootstrap.html'
+        fields = (
+            'id_account',
+            'payer_name',
+            'bill_pay',
+            'date',
+            'last_read_time',
+        )
+
+
+class ERIPFilter(FilterSet):
+    id_account = CharFilter(field_name='id_account', lookup_expr='icontains')
+    payer_name = CharFilter(field_name='payer_name', lookup_expr='icontains')
+    last_read_time = DateFromToRangeFilter()
+
+    class Meta:
+        model = ERIPDataBase
+        fields = ['id_account', 'payer_name', 'last_read_time']

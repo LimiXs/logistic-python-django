@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load django_tables2 %}
+{% load static %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'trade_logistic/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'trade_logistic/css/erip_info.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="mb-4">ERIP Data</h2>
+    <form method="get" class="mb-4">
+      {{ filter.form.as_p }}
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    {% render_table table %}
+  </div>
+{% endblock %}

@@ -15,7 +15,7 @@ from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpRespons
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_tables2 import SingleTableView, LazyPaginator
+from django_tables2 import SingleTableView, LazyPaginator, RequestConfig
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django.urls import include, path
@@ -27,7 +27,7 @@ from django.urls import include, path
 # from trade_logistic.external_utils.connecter_fdb import *
 from .forms import *
 from .models import *
-from .tables import DocTable, DocsFilter
+from .tables import DocTable, DocsFilter, ERIPTable, ERIPFilter
 from .utils import *
 
 
@@ -220,17 +220,22 @@ def download(request, path_doc):
 def show_happy_birthdays(request):
     TXT_FILE = r'D:\khomich\static_sitelogistic\happy_birthdays_bts.txt'
     with open(TXT_FILE, 'r', encoding='utf-8') as file:
-        for _ in range(6):
+        for _ in range(9):  # Пропускаем первые 9 строк
             next(file)
 
-        df = pd.read_csv(file, delimiter='\t')
+        df = pd.read_csv(file, delimiter='\t', names=['ФИО (полное)', 'Должность', 'Подразделение', 'Дата рождения', 'Возраст'])
 
     df['Дата рождения'] = pd.to_datetime(df['Дата рождения'], format='%d.%m.%Y')
     now = pd.Timestamp('now')
     df['days_until_birthday'] = (df['Дата рождения'].dt.month - now.month)*30 + df['Дата рождения'].dt.day - now.day
     df.loc[df['days_until_birthday'] < 0, 'days_until_birthday'] += 360
     df = df.sort_values(by='days_until_birthday')
+
+    df = df.drop_duplicates(subset='ФИО (полное)', keep='first')
+    df = df.head(20)
     df = df.drop(columns=['days_until_birthday'])
+
+    df['Дата рождения'] = df['Дата рождения'].dt.strftime('%d.%m.%Y')
 
     html_table = df.to_html()
 
@@ -239,3 +244,10 @@ def show_happy_birthdays(request):
         'trade_logistic/happy_birthdays.html',
         {'data': html_table}
     )
+
+
+def erip_info(request):
+    erip_filter = ERIPFilter(request.GET, queryset=ERIPDataBase.objects.all())
+    table = ERIPTable(erip_filter.qs)
+    RequestConfig(request, paginate={'per_page': 20}).configure(table)
+    return render(request, 'trade_logistic/erip_info.html', {'table': table, 'filter': erip_filter})

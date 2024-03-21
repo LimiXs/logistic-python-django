@@ -8,7 +8,9 @@ menu = [
     {'title': 'Написать нам', 'url_name': 'contact'},
     {'title': 'Получить шаблон', 'url_name': 'get_excel'},
     {'title': 'Загрузить инвойс', 'url_name': 'upload_file'},
-    {'title': 'Уведомления', 'url_name': 'doc_info'}
+    {'title': 'Уведомления', 'url_name': 'doc_info'},
+    {'title': 'Инфо о ERIP', 'url_name': 'erip_info'},
+    {'title': 'Дни рождения', 'url_name': 'happy_birthdays'}
 ]
 
 MAPPING = {
