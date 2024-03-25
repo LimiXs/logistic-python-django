@@ -249,5 +249,5 @@ def show_happy_birthdays(request):
 def erip_info(request):
     erip_filter = ERIPFilter(request.GET, queryset=ERIPDataBase.objects.all())
     table = ERIPTable(erip_filter.qs)
-    RequestConfig(request, paginate={'per_page': 20}).configure(table)
+    RequestConfig(request, paginate={'per_page': 15}).configure(table)
     return render(request, 'trade_logistic/erip_info.html', {'table': table, 'filter': erip_filter})

@@ -1,8 +1,0 @@
-.django-tables2-pagination ul {
-    display: flex;
-    justify-content: center;
-}
-
-.django-tables2-pagination li {
-    margin: 0 5px;
-}

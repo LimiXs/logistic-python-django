@@ -1,23 +1,38 @@
-/* erip_info.css */
+/* styles.css */
 .container {
-    margin-top: 5rem;
+    width: 80%;
+    margin: auto;
 }
 
-.mb-4 {
-    margin-bottom: 1.5rem!important;
+.table {
+    width: 100%;
+    margin-top: 20px;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
+.form-inline {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.django-tables2-pagination ul {
+/* Стили для пагинации */
+.pagination {
     display: flex;
     justify-content: center;
+    padding: 20px 0;
 }
 
-.django-tables2-pagination li {
-    margin: 0 5px;
+.pagination li {
+    margin: 0 3px;  /* Добавьте пробелы между элементами пагинации */
+}
+
+.pagination .active a {
+    background-color: #0056b3;  /* Измените фон активной ссылки на темно-синий */
+    color: #ffffff;  /* Измените цвет текста активной ссылки на белый */
+    border: 3px solid #ffffff;  /* Добавьте жирную белую границу вокруг активной ссылки */
+}
+
+.pagination a {
+    color: #007bff;
+    font-size: 18px;  /* Увеличьте размер шрифта */
 }

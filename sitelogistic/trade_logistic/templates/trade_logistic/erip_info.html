@@ -1,20 +1,40 @@
-{% extends 'base.html' %}
-
-{% load django_tables2 %}
 {% load static %}
+{% load django_tables2 %}
 
-
-<link rel="stylesheet" type="text/css" href="{% static 'trade_logistic/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'trade_logistic/css/erip_info.css' %}">
-
-
-{% block content %}
-  <div class="container">
-    <h2 class="mb-4">ERIP Data</h2>
-    <form method="get" class="mb-4">
-      {{ filter.form.as_p }}
-      <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-    {% render_table table %}
-  </div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ERIP Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'trade_logistic/css/erip_info.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>ERIP Data</h2>
+        <form method="get">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_id_account">Счёт договора</label>
+                    <input type="text" name="id_account" id="id_id_account" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="id_payer_name">ФИО плательщика</label>
+                    <input type="text" name="payer_name" id="id_payer_name" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_date_0">Дата оплаты (с)</label>
+                    <input type="text" name="date_after" id="id_date_0" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="id_date_1">Дата оплаты (по)</label>
+                    <input type="text" name="date_before" id="id_date_1" class="form-control">
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+        {% render_table table %}
+    </div>
+</body>
+</html>

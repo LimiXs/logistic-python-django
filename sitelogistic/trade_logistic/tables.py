@@ -49,15 +49,15 @@ class ERIPTable(tables.Table):
             'payer_name',
             'bill_pay',
             'date',
-            'last_read_time',
         )
+        show_footer = False
 
 
 class ERIPFilter(FilterSet):
-    id_account = CharFilter(field_name='id_account', lookup_expr='icontains')
-    payer_name = CharFilter(field_name='payer_name', lookup_expr='icontains')
-    last_read_time = DateFromToRangeFilter()
+    id_account = CharFilter(field_name='id_account', lookup_expr='icontains', label='Счёт договора')
+    payer_name = CharFilter(field_name='payer_name', lookup_expr='icontains', label='ФИО плательщика')
+    date = DateFromToRangeFilter(label='Дата оплаты')
 
     class Meta:
         model = ERIPDataBase
-        fields = ['id_account', 'payer_name', 'last_read_time']
+        fields = ['id_account', 'payer_name', 'date']
