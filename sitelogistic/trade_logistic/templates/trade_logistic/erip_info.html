@@ -4,13 +4,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ERIP Data</title>
+    <title>ERIP</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'trade_logistic/css/erip_info.css' %}">
 </head>
 <body>
     <div class="container">
-        <h2>ERIP Data</h2>
+        <h2>ERIP Data Info</h2>
         <form method="get">
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -18,18 +18,18 @@
                     <input type="text" name="id_account" id="id_id_account" class="form-control">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="id_payer_name">ФИО плательщика</label>
+                    <label for="id_payer_name">Ф.И.О плательщика</label>
                     <input type="text" name="payer_name" id="id_payer_name" class="form-control">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="id_date_0">Дата оплаты (с)</label>
-                    <input type="text" name="date_after" id="id_date_0" class="form-control">
+                    <label for="id_date_after">Дата оплаты (с)</label>
+                    <input type="date" name="date_after" id="id_date_after" class="form-control">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="id_date_1">Дата оплаты (по)</label>
-                    <input type="text" name="date_before" id="id_date_1" class="form-control">
+                    <label for="id_date_before">Дата оплаты (по)</label>
+                    <input type="date" name="date_before" id="id_date_before" class="form-control">
                 </div>
             </div>
             <button class="btn btn-primary" type="submit">Search</button>

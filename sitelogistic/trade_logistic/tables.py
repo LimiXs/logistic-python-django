@@ -4,6 +4,10 @@ from .models import DocumentInfo, ERIPDataBase
 from django_filters import FilterSet, CharFilter, DateFromToRangeFilter
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class DocTable(tables.Table):
     class Meta:
         model = DocumentInfo
@@ -33,6 +37,7 @@ class DocsFilter(FilterSet):
     # date_placement = DateFromToRangeFilter(
     #     widget=forms.DateInput(attrs={'class': 'datepicker'})
     # )
+    date_placement = DateFromToRangeFilter(widget=DateInput(), label='Дата')
 
     class Meta:
         model = DocumentInfo
@@ -56,7 +61,7 @@ class ERIPTable(tables.Table):
 class ERIPFilter(FilterSet):
     id_account = CharFilter(field_name='id_account', lookup_expr='icontains', label='Счёт договора')
     payer_name = CharFilter(field_name='payer_name', lookup_expr='icontains', label='ФИО плательщика')
-    date = DateFromToRangeFilter(label='Дата оплаты')
+    date = DateFromToRangeFilter(widget=DateInput(), label='Дата оплаты')
 
     class Meta:
         model = ERIPDataBase
