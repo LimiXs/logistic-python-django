@@ -1,12 +1,9 @@
 import os
 import pandas as pd
 import csv
-import django_tables2 as tables
+
 from io import TextIOWrapper
-import pandas
-from django.shortcuts import render
-from django.db.models import Q
-from django.db.models import F
+
 from django.http import FileResponse
 from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView
@@ -18,13 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_tables2 import SingleTableView, LazyPaginator, RequestConfig
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from django.urls import include, path
 
-# from django.contrib.auth.decorators import login_required
-# from django.contrib.auth.forms import AuthenticationForm
-# from django.core.paginator import Paginator
-# from django.template.loader import render_to_string
-# from trade_logistic.external_utils.connecter_fdb import *
 from .forms import *
 from .models import *
 from .tables import DocTable, DocsFilter, ERIPTable, ERIPFilter
