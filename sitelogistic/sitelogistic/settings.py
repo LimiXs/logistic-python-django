@@ -22,11 +22,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# STATIC_URL = '/static/'
-#
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'trade_logistic/static'),]
-#
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -37,8 +32,8 @@ SECRET_KEY = 'django-insecure-&f-%zx8z1b837$oi5%&3(00k43vk5+#b*z#_6*yzccis_m-f0b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
-INTERNAL_IPS = ['127.0.0.1']
+ALLOWED_HOSTS = []
+INTERNAL_IPS = []
 
 # Application definition
 INSTALLED_APPS = [
