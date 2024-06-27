@@ -148,8 +148,8 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     )
     def admin_start_scheduler(self, request):
         self.scheduler.start_scheduler(
-            {'func': match_pdfs_docs, 'interval': 10},
-            {'func': upload_docs_db, 'interval': 15}
+            {'func': match_pdfs_docs, 'interval': 1},
+            {'func': upload_docs_db, 'interval': 2}
          )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -160,11 +160,6 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     )
     def admin_stop_scheduler(self, request):
         self.scheduler.stop_scheduler()
-    # @button(
-    #     label='Найти pdf',
-    #     change_form=True,
-    #     html_attrs={"class": 'btn-primary'}
-    # )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
@@ -174,7 +169,7 @@ class ERIPDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display_links = ('id', 'id_account',)
     search_fields = ('id_account',)
 
-    @button(label='Удалить все и сбросить автоинкремент', change_form=True, html_attrs={"class": 'btn-primary'})
+    @button(label='Удалить всё и сбросить автоинкремент', change_form=True, html_attrs={"class": 'btn-primary'})
     def delete_all_and_reset(self, request):
         ERIPDataBase.objects.all().delete()
         self.message_user(request, "Все данные успешно удалены", level=messages.SUCCESS)

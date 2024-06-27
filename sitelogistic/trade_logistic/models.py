@@ -116,6 +116,7 @@ class DocumentInfo(models.Model):
     num_nine = models.CharField(max_length=30, blank=True, null=True, verbose_name='№ Длинной "9"')
     num_td = models.CharField(max_length=50, blank=True, null=True, verbose_name='Таможенное разрешение')
     path_doc = models.CharField(max_length=255, blank=True, null=True, verbose_name='Путь')
+    pdf_file = models.FileField(upload_to='pdfs/', null=True, blank=True, verbose_name='PDF файл')
     objects = models.Manager()
 
     def __str__(self):

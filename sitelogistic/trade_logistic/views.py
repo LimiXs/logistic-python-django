@@ -201,11 +201,22 @@ class DocsListView(DataMixin, SingleTableMixin, FilterView):
         return dict(list(context.items()))
 
 
+# def download(request, path_doc):
+#     file_path = path_doc
+#     response = FileResponse(open(file_path, 'rb'))
+#     response['Content-Disposition'] = f'attachment; filename="{file_path.split("/")[-1]}"'
+#     return response
+
 def download(request, path_doc):
-    file_path = path_doc
-    response = FileResponse(open(file_path, 'rb'))
-    response['Content-Disposition'] = f'attachment; filename="{file_path.split("/")[-1]}"'
-    return response
+    file_path = os.path.normpath(path_doc)
+    if not os.path.exists(file_path):
+        return HttpResponseNotFound(f"File not found: {file_path}")
+
+    file_name = os.path.basename(file_path)  # Извлекаем только имя файла из пути
+    with open(file_path, 'rb') as f:
+        response = FileResponse(f)
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        return response
 
 
 def show_happy_birthdays(request):
