@@ -18,17 +18,18 @@ Including another URLconf
 # from django.urls import path, include
 # from trade_logistic import views
 # from django.apps import apps
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from trade_logistic.views import page_not_found
 from django.urls import include, path
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('trade_logistic.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = page_not_found
 

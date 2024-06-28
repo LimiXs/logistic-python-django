@@ -3,7 +3,6 @@ from django_apscheduler.jobstores import DjangoJobStore
 from trade_logistic.external_utils.file_manager import *
 from .external_utils.connecter_fdb import get_data_fdb, HOSTNAME, DATABASE_PATH, USERNAME, PASSWORD
 from .external_utils.parser_pdf import *
-from django.core.files import File
 
 from .models import DocumentInfo
 from .models import PDFDataBase
@@ -23,6 +22,8 @@ class Scheduler:
 
     def stop_scheduler(self):
         if self.plan:
+            # Удаление всех jobs из хранилища DjangoJobStore
+            DjangoJobStore().remove_all_jobs()
             self.plan.shutdown()
             self.plan = None
 
@@ -60,7 +61,8 @@ def match_pdfs_docs():
             doc_info.update(path_doc=pdf.full_path)
             doc_info_instance = doc_info.first()
             with open(pdf.full_path, 'rb') as pdf_file:
-                doc_info_instance.pdf_file.save(pdf.file_name, File(pdf_file), save=True)
+                doc_info_instance.pdf_blob = pdf_file.read()
+                doc_info_instance.save()
 
             pdf.in_use = True
             pdf.save()
@@ -81,20 +83,3 @@ def upload_docs_db():
                 num_nine=record[10],
                 num_td=record[11] if record[11] is None else record[11][:30].replace(';', '; ')
             )
-
-
-def start_scheduler():
-    global scheduler
-    if scheduler is None:
-        scheduler = BackgroundScheduler()
-        scheduler.add_jobstore(DjangoJobStore(), 'default')
-        scheduler.add_job(upload_docs_db, 'interval', minutes=1)
-        scheduler.add_job(match_pdfs_docs, 'interval', minutes=2)
-        scheduler.start()
-
-
-def stop_scheduler():
-    global scheduler
-    if scheduler:
-        scheduler.shutdown()
-        scheduler = None

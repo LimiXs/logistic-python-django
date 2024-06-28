@@ -1,10 +1,12 @@
 from django.contrib import admin, messages
 from django import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db import connection
 
 from admin_extra_buttons.api import ExtraButtonsMixin, button
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django.urls import path
+from django.utils.html import format_html
 
 from trade_logistic.external_utils.connecter_fdb import *
 from .management.commands.read_files_erip import Command
@@ -110,13 +112,60 @@ class PDFDataBaseAdmin(ExtraButtonsMixin, admin.ModelAdmin):
 
 @admin.register(DocumentInfo)
 class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
-    list_display = [field.name for field in DocumentInfo._meta.get_fields()]
-    list_display_links = ('id', 'num_item',)
-    list_filter = ('num_item',)
-    search_fields = ('num_item',)
-    list_per_page = 6
+    list_display = (
+        'id',
+        'date_placement',
+        'num_item',
+        'num_transport',
+        'num_doc',
+        'date_docs',
+        'documents',
+        'status',
+        'num_nine',
+        'num_td',
+        'path_doc',
+        'pdf_blob_link',
+    )
+    list_display_links = ('id', 'num_item')
+    search_fields = ('num_item', 'num_transport')
+    list_per_page = 10
+
+    def pdf_blob_link(self, obj):
+        if obj.pdf_blob:
+            return format_html(
+                '<a href="{}">Скачать PDF</a>',
+                reverse('admin:download_pdf', args=[obj.pk])
+            )
+        return "Нет файла"
+
+    pdf_blob_link.short_description = 'PDF файл'
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('download_pdf/<int:pk>/', self.download_pdf, name='download_pdf'),
+        ]
+        return custom_urls + urls
+
+    def download_pdf(self, request, pk):
+        obj = self.get_object(request, pk)
+        if obj.pdf_blob:
+            response = HttpResponse(obj.pdf_blob, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(obj.num_item)
+            return response
+        else:
+            return HttpResponse("Файл не найден", status=404)
 
     scheduler = Scheduler()
+
+    @button(
+        label='Запустить планировщик',
+        change_form=True,
+        html_attrs={"class": 'btn-primary'}
+    )
+    def admin_start_scheduler(self, request):
+        self.scheduler.start_scheduler()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     @button(
         label='Загрузить данные',
@@ -148,8 +197,8 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     )
     def admin_start_scheduler(self, request):
         self.scheduler.start_scheduler(
-            {'func': match_pdfs_docs, 'interval': 1},
-            {'func': upload_docs_db, 'interval': 2}
+            {'func': match_pdfs_docs, 'interval': 5},
+            {'func': upload_docs_db, 'interval': 10}
          )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -160,6 +209,17 @@ class DocumentInfoAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     )
     def admin_stop_scheduler(self, request):
         self.scheduler.stop_scheduler()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    @button(
+        label='Обнулить путь документов',
+        change_form=True,
+        html_attrs={"class": 'btn-danger'}
+    )
+    def reset_path_doc(self, request):
+        # Обнулить поле path_doc у всех записей
+        DocumentInfo.objects.all().update(path_doc=None, pdf_blob=None)
+        self.message_user(request, "Поле 'Путь' обнулено у всех записей.")
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
